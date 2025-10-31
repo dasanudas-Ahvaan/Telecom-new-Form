@@ -69,7 +69,7 @@ const DynamicField = ({ field, control, register, error }) => {
                     </div>
                 );
             case 'Checkbox':
-                 return (
+                return (
                     <div className="mt-2 space-y-1 text-gray-900">
                         {(options || []).map((opt) => (
                             <label key={opt} className="flex items-center gap-2">
@@ -80,16 +80,16 @@ const DynamicField = ({ field, control, register, error }) => {
                     </div>
                 );
             default:
-                 return <input type="text" {...commonBaseProps} {...register(name, { required: required && `${label} is required` })} />;
+                return <input type="text" {...commonBaseProps} {...register(name, { required: required && `${label} is required` })} />;
         }
     };
-     if (!renderField()) return null;
+    if (!renderField()) return null;
     return (
         <div className={`sm:col-span-1 ${type === 'Checkbox' || type === 'Radio' ? 'sm:col-span-2' : ''}`}>
             <label htmlFor={name} className="block text-sm font-medium text-gray-700">{label} {required && '*'}</label>
             {renderField()}
             {error && error.message && typeof error.message === 'string' && (
-               <p className="mt-1 text-sm text-red-600">{error.message}</p>
+                <p className="mt-1 text-sm text-red-600">{error.message}</p>
             )}
         </div>
     );
@@ -236,10 +236,10 @@ export default function SinglePageRegister() {
         setError('');
         const token = registrationToken || sessionStorage.getItem('registration-token');
         if (!token) {
-             setError("Session invalid. Please verify OTP again.");
-             setIsSubmittingForm(false);
-             setOtpVerified(false);
-             return;
+            setError("Session invalid. Please verify OTP again.");
+            setIsSubmittingForm(false);
+            setOtpVerified(false);
+            return;
         }
 
         // Combine static and dynamic data
@@ -279,6 +279,39 @@ export default function SinglePageRegister() {
     const showSubmitButton = otpVerified && !isFetchingSchema;
     const isLoading = isSendingEmailOtp || isSendingPhoneOtp || isVerifyingOtp || isFetchingSchema || isSubmittingForm;
 
+    //Adding clean up code
+
+    useEffect(() => {
+    const handleBeforeUnload = (event) => {
+        event.preventDefault();
+        event.returnValue = ""; // shows browser warning
+    };
+
+    const handleUnload = () => {
+        try {
+            const payload = JSON.stringify({
+                email: emailValue,
+                mobile: mobileValue,
+            });
+
+            navigator.sendBeacon(`${apiUrl}/api/user-exit`, payload);
+        } catch (error) {
+            console.error("Error sending exit info:", error);
+        }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("unload", handleUnload);
+
+    return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+        window.removeEventListener("unload", handleUnload);
+    };
+}, [emailValue, mobileValue, apiUrl]);
+
+
+
+
     return (
         <div className="max-w-4xl mx-auto bg-white bg-opacity-95 p-6 sm:p-8 rounded-lg shadow-lg mt-8 text-gray-900">
             <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-8">
@@ -295,42 +328,42 @@ export default function SinglePageRegister() {
                     </h2>
                 </div>
 
-                 {/* --- Section 1: Static Info --- */}
+                {/* --- Section 1: Static Info --- */}
                 <fieldset className="grid grid-cols-1 sm:grid-cols-2 gap-6 border p-4 rounded-md" disabled={otpVerified || isLoading}>
                     <legend className="text-lg font-medium text-gray-900 px-2">Basic Information</legend>
                     {/* First Name */}
                     <div>
-                         <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name *</label>
-                         <input type="text" id="firstName" {...register("firstName", { required: "First Name is required" })}
-                             className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${otpVerified ? 'bg-gray-100' : ''}`} />
-                         {errors.firstName && <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>}
-                     </div>
-                     {/* Last Name */}
-                     <div>
-                         <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name *</label>
-                         <input type="text" id="lastName" {...register("lastName", { required: "Last Name is required" })}
-                             className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${otpVerified ? 'bg-gray-100' : ''}`} />
-                         {errors.lastName && <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>}
-                     </div>
-                     {/* Gender */}
-                     <div>
-                         <label htmlFor="gender" className="block text-sm font-medium text-gray-700">Gender</label>
-                         <select id="gender" {...register("gender")}
-                             className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${otpVerified ? 'bg-gray-100' : ''}`}>
-                             <option value="">Select...</option> <option value="Male">Male</option> <option value="Female">Female</option> <option value="Other">Other</option>
-                         </select>
-                         {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender.message}</p>}
-                     </div>
-                      {/* Date of Birth */}
-                     <div>
-                         <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                         <input type="date" id="dateOfBirth" {...register("dateOfBirth")}
-                             className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${otpVerified ? 'bg-gray-100' : ''}`} />
-                         {errors.dateOfBirth && <p className="mt-1 text-sm text-red-600">{errors.dateOfBirth.message}</p>}
-                     </div>
+                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name *</label>
+                        <input type="text" id="firstName" {...register("firstName", { required: "First Name is required" })}
+                            className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${otpVerified ? 'bg-gray-100' : ''}`} />
+                        {errors.firstName && <p className="mt-1 text-sm text-red-600">{errors.firstName.message}</p>}
+                    </div>
+                    {/* Last Name */}
+                    <div>
+                        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name *</label>
+                        <input type="text" id="lastName" {...register("lastName", { required: "Last Name is required" })}
+                            className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${otpVerified ? 'bg-gray-100' : ''}`} />
+                        {errors.lastName && <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>}
+                    </div>
+                    {/* Gender */}
+                    <div>
+                        <label htmlFor="gender" className="block text-sm font-medium text-gray-700">Gender</label>
+                        <select id="gender" {...register("gender")}
+                            className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${otpVerified ? 'bg-gray-100' : ''}`}>
+                            <option value="">Select...</option> <option value="Male">Male</option> <option value="Female">Female</option> <option value="Other">Other</option>
+                        </select>
+                        {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender.message}</p>}
+                    </div>
+                    {/* Date of Birth */}
+                    <div>
+                        <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                        <input type="date" id="dateOfBirth" {...register("dateOfBirth")}
+                            className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${otpVerified ? 'bg-gray-100' : ''}`} />
+                        {errors.dateOfBirth && <p className="mt-1 text-sm text-red-600">{errors.dateOfBirth.message}</p>}
+                    </div>
                 </fieldset>
 
-                 {/* --- Section 2: Email/Phone Verification --- */}
+                {/* --- Section 2: Email/Phone Verification --- */}
                 {!otpVerified && (
                     <fieldset className="grid grid-cols-1 sm:grid-cols-2 gap-6 border p-4 rounded-md" disabled={isLoading}>
                         <legend className="text-lg font-medium text-gray-900 px-2">Contact Verification</legend>
@@ -341,7 +374,7 @@ export default function SinglePageRegister() {
                                 <input type="email" id="email" {...register("email", { required: "Email required" })}
                                     disabled={emailOtpSent || isLoading}
                                     className={`block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${emailOtpSent ? 'bg-gray-100' : ''}`}
-                                    placeholder="you@example.com"/>
+                                    placeholder="you@example.com" />
                                 <button type="button" onClick={() => handleSendOtp('email')} disabled={isLoading || emailOtpSent}
                                     className="px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 whitespace-nowrap">
                                     {isSendingEmailOtp ? '...' : (emailOtpSent ? 'Sent ✓' : 'Send OTP')}
@@ -353,7 +386,7 @@ export default function SinglePageRegister() {
                                     <label htmlFor="emailOtp" className="block text-sm font-medium text-gray-700 mt-2">Email OTP *</label>
                                     <input type="text" id="emailOtp" {...register("emailOtp", { required: "Email OTP required" })} maxLength={6}
                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                        placeholder="6-digit code"/>
+                                        placeholder="6-digit code" />
                                     {errors.emailOtp && <p className="mt-1 text-sm text-red-600">{errors.emailOtp.message}</p>}
                                 </div>
                             )}
@@ -366,7 +399,7 @@ export default function SinglePageRegister() {
                                 <Controller name="mobile" control={control} rules={{ required: "Mobile required" }}
                                     render={({ field: { onChange, value } }) => (
                                         <div className="flex-grow">
-                                             <PhoneInput country={'in'} value={value} onChange={onChange}
+                                            <PhoneInput country={'in'} value={value} onChange={onChange}
                                                 disabled={phoneOtpSent || isLoading}
                                                 inputProps={{ id: "mobile", required: true }}
                                                 inputClass={`block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${phoneOtpSent ? 'bg-gray-100' : ''}`}
@@ -385,7 +418,7 @@ export default function SinglePageRegister() {
                                     <label htmlFor="mobileOtp" className="block text-sm font-medium text-gray-700 mt-2">Mobile OTP *</label>
                                     <input type="text" id="mobileOtp" {...register("mobileOtp", { required: "Mobile OTP required" })} maxLength={6}
                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                                        placeholder="6-digit code"/>
+                                        placeholder="6-digit code" />
                                     {errors.mobileOtp && <p className="mt-1 text-sm text-red-600">{errors.mobileOtp.message}</p>}
                                 </div>
                             )}
@@ -408,7 +441,7 @@ export default function SinglePageRegister() {
                     <fieldset className="grid grid-cols-1 sm:grid-cols-2 gap-6 border p-4 rounded-md">
                         <legend className="text-lg font-medium text-gray-900 px-2">Additional Details</legend>
                         {isFetchingSchema && <p className="sm:col-span-2 text-center text-gray-600">Loading form fields...</p>}
-                        
+
                         {!isFetchingSchema && dynamicFields.length > 0 && dynamicFields.map(field => (
                             <DynamicField
                                 key={field.name}
@@ -418,10 +451,10 @@ export default function SinglePageRegister() {
                                 error={errors[field.name]}
                             />
                         ))}
-                         
-                         {!isFetchingSchema && dynamicFields.length === 0 && !error && (
+
+                        {!isFetchingSchema && dynamicFields.length === 0 && !error && (
                             <p className="sm:col-span-2 text-center text-gray-500">No additional details required by admin.</p>
-                         )}
+                        )}
                     </fieldset>
                 )}
 

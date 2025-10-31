@@ -6,6 +6,10 @@ import Registration from '../models/Registration.js';
 import { generateOtp } from '../utils/otpUtils.js';
 import { sendSMS, sendEmail } from '../utils/messagingUtils.js';
 
+//making a Set() of emails and phone number for quick lookup
+const mySet = new Set();
+
+
 // --- startRegistration function REMOVED ---
 
 // --- Send Email OTP (UPDATED: Includes duplicate check) ---
@@ -25,6 +29,14 @@ export const sendEmailOtpController = async (req, res) => {
         success: false,
         message: 'This Email or Mobile Number is already registered.'
       });
+    }else if(mySet.has(email)){
+      return res.status(409).json({
+        success: false,
+        message: 'OTP is already shared to this email.'
+      });
+    }
+    else{
+      mySet.add(email);
     }
     // --- END DUPLICATE CHECK ---
 
@@ -80,6 +92,18 @@ export const sendPhoneOtpController = async (req, res) => {
         success: false,
         message: 'This Email or Mobile Number is already registered.'
       });
+    }else if(mySet.has(mobile)){
+      return res.status(409).json({
+        success: false,
+        message: 'OTP is already shared to this Phone number.'
+      });
+    }
+    else{
+      console.log("add");
+      
+      mySet.add(mobile);
+      console.log(mySet);
+      console.log(mySet.has(mobile));
     }
      // --- END DUPLICATE CHECK ---
 
@@ -144,6 +168,9 @@ export const verifyOtp = async (req, res) => {
     }
 
     await Otp.deleteOne({ _id: otpRecord._id });
+    
+    mySet.delete(email);
+    mySet.delete(mobile);
 
     const token = jwt.sign({ email: email, mobile: mobile }, process.env.JWT_SECRET, {
       expiresIn: '15m', // Token valid for 15 minutes to complete registration
@@ -182,5 +209,20 @@ export const registerUser = async (req, res) => {
          return res.status(409).json({ success: false, message: 'Duplicate entry error during final registration.' });
     }
     res.status(500).json({ success: false, message: 'Server Error during registration', details: error.message });
+  }
+};
+
+export const userExit = async (req, res) => {
+  try {
+    // console.log("clearup!");
+    const { email, mobile} = req.body;
+    mySet.delete(email);
+    mySet.delete(mobile);
+    console.log(mySet);
+    console.log("cleanup!");
+   
+    res.json({ success: true, message: 'Email and Phone number cleared from memory.' });
+  } catch (error) {
+    
   }
 };
