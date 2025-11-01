@@ -282,32 +282,49 @@ export default function SinglePageRegister() {
     //Adding clean up code
 
     useEffect(() => {
-    const handleBeforeUnload = (event) => {
-        event.preventDefault();
-        event.returnValue = ""; // shows browser warning
-    };
+  // 1️⃣ Warn the user before leaving (reload/close)
+  const handleBeforeUnload = (event) => {
+    event.preventDefault();
+    event.returnValue = ""; // ✅ Required for the native browser warning
+  };
 
-    const handleUnload = () => {
-        try {
-            const payload = JSON.stringify({
-                email: emailValue,
-                mobile: mobileValue,
+  // 2️⃣ Send cleanup data when actually unloading
+  const handleUnload = () => {
+    try {
+      const payload = JSON.stringify({
+        email: emailValue,
+        mobile: mobileValue,
+      });
+
+      // ✅ Must be Blob for sendBeacon
+    //   const blob = new Blob([payload], { type: "application/json" });
+
+    //   // ✅ Fire-and-forget API call that works during unload
+    //   navigator.sendBeacon(`${apiUrl}/api/user-exit`, payload);
+    fetch(`${apiUrl}/api/user-exit`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: payload,
+                keepalive: true, // 👈 this is important
             });
+    } catch (error) {
+      console.error("Error sending exit info:", error);
+    }
+  };
 
-            navigator.sendBeacon(`${apiUrl}/api/user-exit`, payload);
-        } catch (error) {
-            console.error("Error sending exit info:", error);
-        }
-    };
+  window.addEventListener("beforeunload", handleBeforeUnload);
+  window.addEventListener("unload", handleUnload);
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("unload", handleUnload);
-
-    return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-        window.removeEventListener("unload", handleUnload);
-    };
+  return () => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+    window.removeEventListener("unload", handleUnload);
+  };
 }, [emailValue, mobileValue, apiUrl]);
+
+
+
 
 
 

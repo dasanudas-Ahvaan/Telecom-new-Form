@@ -212,17 +212,20 @@ export const registerUser = async (req, res) => {
   }
 };
 
+
+///this endpoint will clear up when user refresh his/her page
 export const userExit = async (req, res) => {
   try {
     // console.log("clearup!");
+    // console.log(req.body);
     const { email, mobile} = req.body;
     mySet.delete(email);
     mySet.delete(mobile);
     console.log(mySet);
-    console.log("cleanup!");
+    // console.log("cleanup!");
    
     res.json({ success: true, message: 'Email and Phone number cleared from memory.' });
   } catch (error) {
-    
+    res.status(500).json({ success: false, message: 'Server Error during registration', details: error.message });
   }
 };
