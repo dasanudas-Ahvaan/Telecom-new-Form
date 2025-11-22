@@ -31,7 +31,6 @@ export default function Navbar() {
                         <>
                             <Link href="/admin/dashboard" className="text-gray-700 hover:text-blue-600">Dashboard</Link>
                             <Link href="/admin/editor" className="text-gray-700 hover:text-blue-600">Form Editor</Link>
-                            <Link href="/admin/data-explorer" className="text-gray-700 hover:text-blue-600">Data Explorer</Link>
                             <Link href="/admin/manage-admins" className="text-gray-700 hover:text-blue-600">Manage Admins</Link>
                        
                         </>
@@ -42,7 +41,7 @@ export default function Navbar() {
                         <>
                             <Link href="/" className="text-gray-700 hover:text-blue-600">Home</Link>
                             { !pathname.startsWith('/start-registration') && !pathname.startsWith('/otp') && !pathname.startsWith('/register') &&
-                                <Link href="/start-registration" className="text-gray-700 hover:text-blue-600">Start Registration</Link>
+                                <Link href="/register" className="text-gray-700 hover:text-blue-600">Start Registration</Link>
                             }
                             <Link href="/admin/login" className="text-gray-700 hover:text-blue-600">Admin Login</Link>
                         </>

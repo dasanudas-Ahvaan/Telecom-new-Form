@@ -8,7 +8,16 @@ import Link from "next/link"; // Import Link for Back button
 
 // All the field types your admin can choose from
 const fieldTypes = [
-    "Text", "Email", "Number", "Date", "Phone", "Country", "Radio", "Checkbox"
+  "Text",
+  "Email",
+  "Number",
+  "Date",
+  "Phone",
+  "Country",
+  "State", // <-- ADDED
+  "City",  // <-- ADDED
+  "Radio",
+  "Checkbox",
 ];
 
 export default function FormEditor() {
@@ -36,7 +45,7 @@ export default function FormEditor() {
                 });
                 // Use the modified controller logic which returns [] on empty
                 if (res.data?.success && Array.isArray(res.data.fields)) {
-                     // Set default fields only if the fetched array is truly empty
+                    // Set default fields only if the fetched array is truly empty
                     if (res.data.fields.length === 0) {
                         setFields([
                             { name: "firstName", label: "First Name", type: "Text", required: true, options: [] },
@@ -45,20 +54,20 @@ export default function FormEditor() {
                             { name: "mobile", label: "Mobile", type: "Phone", required: true, options: [] },
                         ]);
                     } else {
-                         setFields(res.data.fields);
+                        setFields(res.data.fields);
                     }
                 } else {
                     // Handle case where success is false or fields is not an array
                     setError(res.data?.message || 'Could not load form configuration.');
-                     setFields([ // Fallback default fields on error
+                    setFields([ // Fallback default fields on error
                         { name: "firstName", label: "First Name", type: "Text", required: true, options: [] },
                         { name: "lastName", label: "Last Name", type: "Text", required: true, options: [] },
-                     ]);
+                    ]);
                 }
             } catch (err) {
                 console.error("Fetch form error:", err);
                 setError(err.response?.data?.message || "Failed to load form.");
-                 if (err.response?.status === 401) router.push('/admin/login');
+                if (err.response?.status === 401) router.push('/admin/login');
             } finally {
                 setLoading(false);
             }
@@ -93,6 +102,24 @@ export default function FormEditor() {
         const newFields = fields.filter((_, i) => i !== index);
         setFields(newFields);
     };
+
+    // --- NEW Reorder Functions ---
+    const moveFieldUp = (index) => {
+        if (index === 0) return; // Can't move up if already at the top
+        const newFields = [...fields];
+        // Simple swap
+        [newFields[index - 1], newFields[index]] = [newFields[index], newFields[index - 1]];
+        setFields(newFields);
+    };
+
+    const moveFieldDown = (index) => {
+        if (index === fields.length - 1) return; // Can't move down if already at the bottom
+        const newFields = [...fields];
+        // Simple swap
+        [newFields[index + 1], newFields[index]] = [newFields[index], newFields[index + 1]];
+        setFields(newFields);
+    };
+    // --- End NEW Reorder Functions ---
 
     // --- Option Management Functions ---
     const addOption = (fieldIndex) => {
@@ -134,14 +161,14 @@ export default function FormEditor() {
             if (res.data?.success) {
                 alert("Form updated successfully!");
                 // Optionally refetch fields if backend modifies them on save
-                 setFields(res.data.fields || fields);
+                setFields(res.data.fields || fields);
             } else {
                 setError(res.data?.message || "Failed to update form.");
             }
         } catch (err) {
             console.error("Save form error:", err);
             setError(err.response?.data?.message || "An error occurred.");
-             if (err.response?.status === 401) router.push('/admin/login');
+            if (err.response?.status === 401) router.push('/admin/login');
         } finally {
             setLoading(false);
         }
@@ -151,7 +178,7 @@ export default function FormEditor() {
     if (loading && fields.length === 0) {
         return (
             <main className="flex min-h-screen items-center justify-center">
-                 {/* Ensure loading text is dark */}
+                {/* Ensure loading text is dark */}
                 <p className="text-gray-900">Loading Form Editor...</p>
             </main>
         );
@@ -161,12 +188,12 @@ export default function FormEditor() {
     return (
         // 1. Container div with max-w-4xl and styling, added default text color
         <div className="min-h-screen bg-[url('/logos/background.jpg')] p-0 sm:p-8">
-             <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6">
                 {/* Ensure heading text is dark */}
                 <h1 className="text-3xl font-bold text-blue-800">Form Editor</h1>
-                 <Link href="/admin/dashboard" className="text-blue-600 hover:underline">Back to Dashboard</Link>
-             </div>
-             {/* Ensure paragraph text is dark */}
+                <Link href="/admin/dashboard" className="text-blue-600 hover:underline">Back to Dashboard</Link>
+            </div>
+            {/* Ensure paragraph text is dark */}
             <p className="mb-6 text-gray-700">Add, remove, or edit the fields for the user registration form.</p>
             {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
 
@@ -200,7 +227,7 @@ export default function FormEditor() {
                                     <option key={type} value={type}>{type}</option>
                                 ))}
                             </select>
-                             {/* Ensure label text is dark */}
+                            {/* Ensure label text is dark */}
                             <label className="flex items-center gap-2 text-gray-700">
                                 <input
                                     type="checkbox" name="required"
@@ -214,12 +241,34 @@ export default function FormEditor() {
                                 onClick={() => removeField(index)}
                                 className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                             > Remove </button>
+
+                            {/* --- NEW Reorder Buttons --- */}
+                            <div className="flex flex-col">
+                                <button
+                                    type="button" 
+                                    onClick={() => moveFieldUp(index)}
+                                    disabled={index === 0} // Disable if it's the first item
+                                    className="px-2 py-1 text-sm bg-gray-200 text-gray-800 rounded-t hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    &#9650; {/* Up arrow */}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => moveFieldDown(index)}
+                                    disabled={index === fields.length - 1} // Disable if it's the last item
+                                    className="px-2 py-1 text-sm bg-gray-200 text-gray-800 rounded-b hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    &#9660; {/* Down arrow */}
+                                </button>
+                            </div>
+                            {/* --- End NEW Reorder Buttons --- */}
+                            
                         </div>
 
                         {/* --- Options Config (Only for Radio/Checkbox) --- */}
                         {["Radio", "Checkbox"].includes(field.type) && (
                             <div className="pl-6 border-l-4 border-blue-300 space-y-2">
-                                 {/* Ensure heading text is dark */}
+                                {/* Ensure heading text is dark */}
                                 <h4 className="text-sm font-semibold text-gray-700">Options for {field.label || 'this field'}</h4>
                                 {(field.options || []).map((opt, optIndex) => (
                                     <div key={optIndex} className="flex items-center gap-2">
@@ -245,7 +294,7 @@ export default function FormEditor() {
                 ))}
             </div>
 
-             {/* --- Action Buttons --- */}
+            {/* --- Action Buttons --- */}
             <div className="mt-8 pt-6 border-t flex justify-between">
                 <button
                     onClick={addField}

@@ -8,6 +8,7 @@ export default function Home() {
   // No top-level <main> tag here, as RootLayout provides it.
   return (
     // 1. Container div with max-w-md and styling, default dark text
+    <div className="min-h-screen bg-cover bg-center bg-[url('/logos/background.jpg')] flex items-center justify-center">
     <div className="max-w-md mx-auto bg-white bg-opacity-95 p-6 sm:p-8 rounded-lg shadow-lg mt-8 text-center text-gray-900">
       <Image
         src="/logos/ahvaan_logo.jpg"
@@ -49,5 +50,6 @@ export default function Home() {
         </Link>
       </div>
     </div>
+  </div>
   );
 }

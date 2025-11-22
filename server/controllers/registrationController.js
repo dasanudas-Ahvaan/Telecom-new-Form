@@ -6,226 +6,281 @@ import Registration from '../models/Registration.js';
 import { generateOtp } from '../utils/otpUtils.js';
 import { sendSMS, sendEmail } from '../utils/messagingUtils.js';
 
-//making a Set() of emails and phone number for quick lookup
-const mySet = new Set();
+// --- CHANGED: Use a Map for Timers instead of a Set for Blocking ---
+// Key: Email/Mobile, Value: Timestamp of last request
+const otpCooldowns = new Map();
 
+// Helper to check cooldown (15 seconds)
+const checkCooldown = (key) => {
+  const lastRequest = otpCooldowns.get(key);
+  if (lastRequest && Date.now() - lastRequest < 15000) { // 15000 ms = 15 seconds
+    const remaining = Math.ceil((15000 - (Date.now() - lastRequest)) / 1000);
+    return remaining;
+  }
+  return 0; // No cooldown, allowed to proceed
+};
 
-// --- startRegistration function REMOVED ---
-
-// --- Send Email OTP (UPDATED: Includes duplicate check) ---
+/* ============================================================================
+ * SEND EMAIL OTP
+ * ============================================================================ */
 export const sendEmailOtpController = async (req, res) => {
   try {
     const { email, mobile } = req.body;
-    if (!email || !mobile) {
-      return res.status(400).json({ success: false, message: 'Email and mobile are required' });
-    }
+    if (!email || !mobile)
+      return res.status(400).json({ success: false, message: 'Email and mobile required' });
 
-    // --- DUPLICATE CHECK ADDED ---
+    // 1. Check for existing user
+    // Allow existing users ONLY if they are Drafts or Inactive
     const existingUser = await Registration.findOne({
-      $or: [{ email: email }, { mobile: mobile }]
+      $or: [{ email }, { mobile }]
     });
-    if (existingUser) {
+
+    if (existingUser && !existingUser.isDraft && !existingUser.isInactive) {
       return res.status(409).json({
         success: false,
         message: 'This Email or Mobile Number is already registered.'
       });
-    }else if(mySet.has(email)){
-      return res.status(409).json({
+    }
+
+    // 2. Rate Limiting (Cooldown Check)
+    const cooldown = checkCooldown(email);
+    if (cooldown > 0) {
+      return res.status(429).json({ // 429 = Too Many Requests
         success: false,
-        message: 'OTP is already shared to this email.'
+        message: `Please wait ${cooldown} seconds before resending email OTP.`
       });
     }
-    else{
-      mySet.add(email);
-    }
-    // --- END DUPLICATE CHECK ---
 
+    // 3. Update Cooldown Timer
+    otpCooldowns.set(email, Date.now());
+
+    // 4. Generate & Save OTP (Upsert handles "Resend" automatically)
     const emailOtp = generateOtp();
-
-    // Find existing OTP record or create/update one
     await Otp.findOneAndUpdate(
-      { email: email, mobile: mobile },
-      { $set: { emailOtp: emailOtp, emailOtpSent: true } }, // Set the email OTP and mark as sent
+      { email, mobile },
+      { $set: { emailOtp, emailOtpSent: true } },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
-    // Send/Log based on environment
+    // 5. Send Email
     if (process.env.NODE_ENV === 'production') {
-        const emailSent = await sendEmail(email, emailOtp);
-        if (!emailSent) {
-           console.error(`Failed to send email OTP to ${email} in production.`);
-           // Decide if this should be a hard failure or just logged
-           // return res.status(500).json({ success: false, message: 'Failed to send email OTP.' });
-        }
+      await sendEmail(email, emailOtp);
     } else {
-        console.log('--- DEVELOPMENT OTP ---');
-        console.log(`Email OTP for ${email}: ${emailOtp}`);
-        console.log('-------------------------');
+      console.log(`DEV EMAIL OTP (${email}): ${emailOtp}`);
     }
 
-    res.json({ success: true, message: 'Email OTP handled.' });
+    res.json({ success: true, message: 'Email OTP sent successfully.' });
 
   } catch (error) {
     console.error('Send Email OTP Error:', error);
-    // Handle potential duplicate key error during upsert if needed, although check above should prevent most
-    if (error.code === 11000) {
-        return res.status(400).json({ success: false, message: 'Error processing OTP request, potentially duplicate attempt.' });
-    }
     res.status(500).json({ success: false, message: 'Server Error sending email OTP' });
   }
 };
 
-// --- Send Phone OTP (Includes duplicate check) ---
+
+/* ============================================================================
+ * SEND PHONE OTP
+ * ============================================================================ */
 export const sendPhoneOtpController = async (req, res) => {
   try {
     const { email, mobile } = req.body;
-    if (!email || !mobile) {
-      return res.status(400).json({ success: false, message: 'Email and mobile are required' });
-    }
+    if (!email || !mobile)
+      return res.status(400).json({ success: false, message: 'Email and mobile required' });
 
-    // --- DUPLICATE CHECK ADDED ---
     const existingUser = await Registration.findOne({
-      $or: [{ email: email }, { mobile: mobile }]
+      $or: [{ email }, { mobile }]
     });
-    if (existingUser) {
+
+    // Allow draft/inactive users
+    if (existingUser && !existingUser.isDraft && !existingUser.isInactive) {
       return res.status(409).json({
         success: false,
         message: 'This Email or Mobile Number is already registered.'
       });
-    }else if(mySet.has(mobile)){
-      return res.status(409).json({
+    }
+
+    // 1. Rate Limiting (Cooldown Check)
+    const cooldown = checkCooldown(mobile);
+    if (cooldown > 0) {
+      return res.status(429).json({
         success: false,
-        message: 'OTP is already shared to this Phone number.'
+        message: `Please wait ${cooldown} seconds before resending SMS.`
       });
     }
-    else{
-      console.log("add");
-      
-      mySet.add(mobile);
-      console.log(mySet);
-      console.log(mySet.has(mobile));
-    }
-     // --- END DUPLICATE CHECK ---
+
+    // 2. Update Cooldown Timer
+    otpCooldowns.set(mobile, Date.now());
 
     const mobileOtp = generateOtp();
-
-    // Find existing OTP record or create/update one
     await Otp.findOneAndUpdate(
-      { email: email, mobile: mobile },
-      { $set: { mobileOtp: mobileOtp, mobileOtpSent: true } }, // Set the mobile OTP and mark as sent
+      { email, mobile },
+      { $set: { mobileOtp, mobileOtpSent: true } },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
-    // Send/Log based on environment
     if (process.env.NODE_ENV === 'production') {
-        const smsSent = await sendSMS(mobile, mobileOtp);
-         if (!smsSent) {
-           console.error(`Failed to send SMS OTP to ${mobile} in production.`);
-           // Decide if this should be a hard failure or just logged
-           // return res.status(500).json({ success: false, message: 'Failed to send phone OTP.' });
-        }
+      await sendSMS(mobile, mobileOtp);
     } else {
-        console.log('--- DEVELOPMENT OTP ---');
-        console.log(`Mobile OTP for ${mobile}: ${mobileOtp}`);
-        console.log('-------------------------');
+      console.log(`DEV MOBILE OTP (${mobile}): ${mobileOtp}`);
     }
 
-    res.json({ success: true, message: 'Phone OTP handled.' });
+    res.json({ success: true, message: 'Phone OTP sent successfully.' });
 
   } catch (error) {
     console.error('Send Phone OTP Error:', error);
-     // Handle potential duplicate key error during upsert if needed
-    if (error.code === 11000) {
-        return res.status(400).json({ success: false, message: 'Error processing OTP request, potentially duplicate attempt.' });
-    }
-    res.status(500).json({ success: false, message: 'Server Error sending phone OTP' });
+    res.status(500).json({ success: false, message: 'Server Error sending SMS' });
   }
 };
 
 
-// --- Verify OTP ---
+/* ============================================================================
+ * VERIFY OTP
+ * ============================================================================ */
 export const verifyOtp = async (req, res) => {
   try {
     const { email, mobile, mobileOtp, emailOtp } = req.body;
 
-    const otpRecord = await Otp.findOne({ email: email, mobile: mobile });
+    // Find the OTP record
+    const otpRecord = await Otp.findOne({ email, mobile });
 
-    // Check if both have been SENT before verifying values
-    if (!otpRecord || !otpRecord.emailOtpSent || !otpRecord.mobileOtpSent) {
-       return res.status(400).json({ success: false, message: 'Both email and phone OTPs must be requested first.' });
-    }
-    // Check if both OTP values actually exist (they should if sent flag is true)
-     if (!otpRecord.mobileOtp || !otpRecord.emailOtp) {
-       return res.status(400).json({ success: false, message: 'Internal error: OTPs missing despite being marked sent.' });
+    if (!otpRecord) {
+      // Logic change: If record is missing, it expired.
+      return res.status(400).json({ success: false, message: 'OTP expired. Please resend.' });
     }
 
-    if (otpRecord.mobileOtp !== mobileOtp) {
+    if (!otpRecord.emailOtpSent || !otpRecord.mobileOtpSent) {
+       return res.status(400).json({ success: false, message: 'Please send both OTPs first.' });
+    }
+
+    if (otpRecord.mobileOtp !== mobileOtp)
       return res.status(400).json({ success: false, message: 'Invalid Mobile OTP' });
-    }
 
-    if (otpRecord.emailOtp !== emailOtp) {
+    if (otpRecord.emailOtp !== emailOtp)
       return res.status(400).json({ success: false, message: 'Invalid Email OTP' });
-    }
 
+    // Success! Delete the used OTP record
     await Otp.deleteOne({ _id: otpRecord._id });
-    
-    mySet.delete(email);
-    mySet.delete(mobile);
 
-    const token = jwt.sign({ email: email, mobile: mobile }, process.env.JWT_SECRET, {
-      expiresIn: '15m', // Token valid for 15 minutes to complete registration
-    });
+    // Clear the cooldowns so they can start fresh next time if needed
+    otpCooldowns.delete(email);
+    otpCooldowns.delete(mobile);
 
-    res.json({ success: true, message: 'OTP verified successfully', token: token });
+    const token = jwt.sign({ email, mobile }, process.env.JWT_SECRET, { expiresIn: '15m' });
+    res.json({ success: true, message: 'Verified', token });
+
   } catch (error) {
     console.error('Verify OTP Error:', error);
     res.status(500).json({ success: false, message: 'Server Error verifying OTP' });
   }
 };
 
-// --- registerUser  ---
-export const registerUser = async (req, res) => {
- try {
-    // email and mobile are added by verifyRegistrationToken middleware
-    const { formData, firstName, lastName } = req.body;
 
-    // Create final registration document
-    const newRegistration = await Registration.create({
-      registrationId: `AHV-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
-      email: req.email, // Use email from the secure token
-      mobile: req.mobile, // Use mobile from the secure token
-      firstName: firstName,
-      lastName: lastName,
-      formData: formData,
-      otpVerifiedPhone: true,
-      otpVerifiedEmail: true,
-    });
+/* ============================================================================
+ * SAVE DRAFT
+ * ============================================================================ */
+export const saveDraft = async (req, res) => {
+  try {
+    const { formData, fullName, gender, dateOfBirth } = req.body;
 
-    res.json({ success: true, message: 'Registration successful!', data: newRegistration });
+    await Registration.findOneAndUpdate(
+      { email: req.email, mobile: req.mobile },
+      {
+        $set: {
+          fullName,
+          gender,
+          dateOfBirth,
+          formData,
+          isDraft: true,
+          otpVerifiedPhone: true,
+          otpVerifiedEmail: true,
+        },
+        $setOnInsert: {
+          registrationId: `AHV-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
+          createdAt: new Date()
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    res.json({ success: true, message: 'Draft saved successfully.' });
+
   } catch (error) {
-    console.error('Register User Error:', error);
-    // Handle potential duplicate errors if somehow verification was bypassed (shouldn't happen)
-    if (error.code === 11000) {
-         return res.status(409).json({ success: false, message: 'Duplicate entry error during final registration.' });
-    }
-    res.status(500).json({ success: false, message: 'Server Error during registration', details: error.message });
+    console.error('Save Draft Error:', error);
+    res.status(500).json({ success: false, message: 'Server Error saving draft' });
   }
 };
 
 
-///this endpoint will clear up when user refresh his/her page
+/* ============================================================================
+ * GET DRAFT
+ * ============================================================================ */
+export const getDraft = async (req, res) => {
+  try {
+    const registration = await Registration.findOne({ email: req.email, mobile: req.mobile });
+
+    if (registration && registration.isDraft) {
+      res.json({ success: true, draft: registration });
+    } else {
+      res.json({ success: true, draft: null });
+    }
+
+  } catch (error) {
+    console.error('Get Draft Error:', error);
+    res.status(500).json({ success: false, message: 'Server Error fetching draft' });
+  }
+};
+
+
+/* ============================================================================
+ * FINAL REGISTRATION (SUBMIT)
+ * ============================================================================ */
+export const registerUser = async (req, res) => {
+  try {
+    const { formData, fullName, gender, dateOfBirth } = req.body;
+
+    const newRegistration = await Registration.findOneAndUpdate(
+      { email: req.email, mobile: req.mobile },
+      {
+        $set: {
+          fullName,
+          gender,
+          dateOfBirth,
+          formData,
+          isDraft: false, // Mark as Final
+          otpVerifiedPhone: true,
+          otpVerifiedEmail: true
+        },
+        $setOnInsert: {
+          registrationId: `AHV-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
+          createdAt: new Date()
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    res.json({ success: true, message: 'Registration successful!', data: newRegistration });
+
+  } catch (error) {
+    console.error('Register User Error:', error);
+    res.status(500).json({ success: false, message: 'Server Error submitting form' });
+  }
+};
+
+
+/* ============================================================================
+ * USER EXIT
+ * ============================================================================ */
 export const userExit = async (req, res) => {
   try {
-    // console.log("clearup!");
-    // console.log(req.body);
-    const { email, mobile} = req.body;
-    mySet.delete(email);
-    mySet.delete(mobile);
-    console.log(mySet);
-    // console.log("cleanup!");
-   
-    res.json({ success: true, message: 'Email and Phone number cleared from memory.' });
+    const { email, mobile } = req.body;
+    // We don't block anymore, but we can clear the timer if user explicitly exits
+    // so they can restart immediately if they want.
+    if (email) otpCooldowns.delete(email);
+    if (mobile) otpCooldowns.delete(mobile);
+
+    res.json({ success: true, message: 'Session cleared.' });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server Error during registration', details: error.message });
+    console.error("Exit Error:", error);
+    res.status(500).json({ success: false, message: 'Server Error clearing session' });
   }
 };
