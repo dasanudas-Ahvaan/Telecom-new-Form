@@ -15,8 +15,6 @@ export const DynamicField = ({ field, fieldName, control, register, error, setVa
     const commonBaseProps = { id: fieldName, className: `${baseInputClasses} ${readOnlyClasses}`, readOnly: isReadOnly };
 
     // --- Location Logic: Auto-detect parent fields ---
-    // If fieldName is "users.0.state", we watch "users.0.country"
-    // If fieldName is "state", we watch "country"
     const parts = fieldName.split('.');
     const prefix = parts.length > 1 ? parts.slice(0, -1).join('.') + '.' : '';
 
@@ -24,7 +22,6 @@ export const DynamicField = ({ field, fieldName, control, register, error, setVa
     const stateFieldName = `${prefix}state`;
     const cityFieldName = `${prefix}city`;
 
-    // useWatch subscribes to the form state in real-time
     const selectedCountry = useWatch({ control, name: countryFieldName });
     const selectedState = useWatch({ control, name: stateFieldName });
 
@@ -49,8 +46,8 @@ export const DynamicField = ({ field, fieldName, control, register, error, setVa
                                 onChange={(val) => {
                                     controllerField.onChange(val ? val.value : null);
                                     if (setValue) {
-                                        setValue(stateFieldName, null); // Reset State
-                                        setValue(cityFieldName, null);  // Reset City
+                                        setValue(stateFieldName, null); 
+                                        setValue(cityFieldName, null);  
                                     }
                                 }}
                                 className="mt-1 text-gray-900" classNamePrefix="react-select" isDisabled={isReadOnly} placeholder="Select Country..."
@@ -71,7 +68,7 @@ export const DynamicField = ({ field, fieldName, control, register, error, setVa
                                 value={stateOptions.find(s => s.value === controllerField.value) || null}
                                 onChange={(val) => {
                                     controllerField.onChange(val ? val.value : null);
-                                    if (setValue) setValue(cityFieldName, null); // Reset City
+                                    if (setValue) setValue(cityFieldName, null); 
                                 }}
                                 isDisabled={isReadOnly || !selectedCountry} 
                                 className="mt-1 text-gray-900" classNamePrefix="react-select" 
@@ -102,6 +99,22 @@ export const DynamicField = ({ field, fieldName, control, register, error, setVa
                     />
                 );
 
+            // --- DROPDOWN (New Logic Added Here) ---
+            case 'Dropdown':
+                return (
+                    <select
+                        {...commonBaseProps}
+                        {...register(fieldName, { required: required && `${label} is required` })}
+                    >
+                        <option value="">Select an option</option>
+                        {(options || []).map((opt, index) => (
+                            <option key={index} value={opt}>
+                                {opt}
+                            </option>
+                        ))}
+                    </select>
+                );
+
             case 'Radio':
                 return (
                     <div className="mt-2 space-y-1 text-gray-900">
@@ -128,7 +141,6 @@ export const DynamicField = ({ field, fieldName, control, register, error, setVa
 
     return (
         <div className={`w-full ${type === 'Checkbox' || type === 'Radio' ? 'sm:col-span-2' : ''}`}>
-            {/* Explicit Label Rendering */}
             <label htmlFor={fieldName} className="block text-sm font-medium text-gray-700 mb-1">
                 {label} {required && <span className="text-red-500">*</span>}
             </label>

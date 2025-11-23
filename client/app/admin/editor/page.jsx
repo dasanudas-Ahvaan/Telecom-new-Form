@@ -14,8 +14,9 @@ const fieldTypes = [
   "Date",
   "Phone",
   "Country",
-  "State", // <-- ADDED
-  "City",  // <-- ADDED
+  "State", 
+  "City",
+  "Dropdown", // <-- ADDED: New field type
   "Radio",
   "Checkbox",
 ];
@@ -83,7 +84,9 @@ export default function FormEditor() {
             ...newFields[index],
             [name]: type === "checkbox" ? checked : value,
         };
-        if (name === "type" && !["Radio", "Checkbox"].includes(value)) {
+        
+        // UPDATED LOGIC: allow "Dropdown" to keep its options array
+        if (name === "type" && !["Radio", "Checkbox", "Dropdown"].includes(value)) {
             newFields[index].options = [];
         }
         setFields(newFields);
@@ -103,7 +106,7 @@ export default function FormEditor() {
         setFields(newFields);
     };
 
-    // --- NEW Reorder Functions ---
+    // --- Reorder Functions ---
     const moveFieldUp = (index) => {
         if (index === 0) return; // Can't move up if already at the top
         const newFields = [...fields];
@@ -119,7 +122,6 @@ export default function FormEditor() {
         [newFields[index + 1], newFields[index]] = [newFields[index], newFields[index + 1]];
         setFields(newFields);
     };
-    // --- End NEW Reorder Functions ---
 
     // --- Option Management Functions ---
     const addOption = (fieldIndex) => {
@@ -242,7 +244,7 @@ export default function FormEditor() {
                                 className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                             > Remove </button>
 
-                            {/* --- NEW Reorder Buttons --- */}
+                            {/* --- Reorder Buttons --- */}
                             <div className="flex flex-col">
                                 <button
                                     type="button" 
@@ -261,12 +263,13 @@ export default function FormEditor() {
                                     &#9660; {/* Down arrow */}
                                 </button>
                             </div>
-                            {/* --- End NEW Reorder Buttons --- */}
+                            {/* --- End Reorder Buttons --- */}
                             
                         </div>
 
-                        {/* --- Options Config (Only for Radio/Checkbox) --- */}
-                        {["Radio", "Checkbox"].includes(field.type) && (
+                        {/* --- Options Config (For Radio/Checkbox/Dropdown) --- */}
+                        {/* UPDATED LOGIC: Include Dropdown in the check below */}
+                        {["Radio", "Checkbox", "Dropdown"].includes(field.type) && (
                             <div className="pl-6 border-l-4 border-blue-300 space-y-2">
                                 {/* Ensure heading text is dark */}
                                 <h4 className="text-sm font-semibold text-gray-700">Options for {field.label || 'this field'}</h4>
@@ -307,6 +310,5 @@ export default function FormEditor() {
                 > {loading ? "Saving..." : "Save Changes"} </button>
             </div>
         </div>
-        // Removed outer <main> tag as RootLayout provides it
     );
 }
