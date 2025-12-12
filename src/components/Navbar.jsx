@@ -39,23 +39,25 @@ export default function Navbar() {
 
           {/* Desktop Links */}
           <ul className="hidden md:flex gap-8 text-gray-700 font-medium">
-            {routes.map((route, index) => (
-              <li
-                key={index}
-                onClick={() => {
-                  if (route.name === "Logout") {
-                    logout();
-                    navigate("/admin");
-                    return;
-                  }
-                  navigate(route.link);
-                  setOpen(false);
-                }}
-                className="hover:text-blue-600 cursor-pointer"
-              >
-                {route.name}
-              </li>
-            ))}
+            {routes
+              .filter((f) => (token ? f.name !== "Login" : f.name !== "Logout"))
+              .map((route, index) => (
+                <li
+                  key={index}
+                  onClick={() => {
+                    if (route.name === "Logout") {
+                      logout();
+                      navigate("/admin");
+                      return;
+                    }
+                    navigate(route.link);
+                    setOpen(false);
+                  }}
+                  className="hover:text-blue-600 cursor-pointer"
+                >
+                  {route.name}
+                </li>
+              ))}
           </ul>
 
           {/* Mobile Hamburger Button */}
@@ -84,23 +86,25 @@ export default function Navbar() {
         </div>
 
         <ul className="p-4 flex flex-col gap-4 text-gray-700 font-medium">
-          {routes.map((route, index) => (
-            <li
-              key={index}
-              onClick={() => {
-                if (route.name === "Logout") {
-                  logout();
-                  navigate("/admin");
-                  return;
-                }
-                navigate(route.link);
-                setOpen(false);
-              }}
-              className="hover:text-blue-600 cursor-pointer"
-            >
-              {route.name}
-            </li>
-          ))}
+          {routes
+            .filter((f) => (token ? f.name !== "Login" : f.name !== "Logout"))
+            .map((route, index) => (
+              <li
+                key={index}
+                onClick={() => {
+                  if (route.name === "Logout") {
+                    logout();
+                    navigate("/admin");
+                    return;
+                  }
+                  navigate(route.link);
+                  setOpen(false);
+                }}
+                className="hover:text-blue-600 cursor-pointer"
+              >
+                {route.name}
+              </li>
+            ))}
         </ul>
       </div>
     </>
