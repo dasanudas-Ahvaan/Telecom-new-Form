@@ -1,3 +1,4 @@
+import ExtraFields from "../ExtraFields";
 import Input from "../Input";
 
 export default function StepTwo({
@@ -6,6 +7,7 @@ export default function StepTwo({
   handleChange,
   submitForm,
   message,
+  exFields = [],
 }) {
   return (
     <form
@@ -133,10 +135,6 @@ export default function StepTwo({
 
       {/* Additional */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">
-          Additional Details
-        </h2>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Input
             label="Previous Associations"
@@ -150,15 +148,21 @@ export default function StepTwo({
             value={formData.volunteerPrograms}
             onChange={handleChange}
           />
+          {Array.isArray(exFields) && exFields.length > 0 && (
+            <div className="flex flex-col items-start">
+              <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                Additional Details
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <ExtraFields
+                  exFields={exFields}
+                  formData={formData}
+                  handleChange={handleChange}
+                />
+              </div>
+            </div>
+          )}
         </div>
-
-        <textarea
-          name="extraFields"
-          value={formData.extraFields}
-          onChange={handleChange}
-          placeholder="Any additional information..."
-          className="w-full mt-4 p-3 border rounded-lg focus:ring-2 focus:ring-red-600"
-        ></textarea>
       </section>
 
       <footer className="text-center">

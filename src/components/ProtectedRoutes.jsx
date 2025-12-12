@@ -4,7 +4,7 @@ const ProtectedRoute = ({ children, redirectTo }) => {
   const { token, user } = useAuth();
 
   const isAuthenticated = Boolean(token);
-  const isPermitted = user.role === "admin" || user.role === "super_user";
+  const isPermitted = user?.role === "admin" || user?.role === "super_user";
   if (!isAuthenticated) {
     return <Navigate to={"/"} replace />;
   } else if (!isPermitted) {

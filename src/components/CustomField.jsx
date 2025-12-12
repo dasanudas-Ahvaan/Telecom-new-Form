@@ -9,7 +9,6 @@ import { useAuth } from "../authContext/AuthContext";
 
 export default function CustomFields() {
   const { token, user } = useAuth();
-  console.log("THIS IS TOKEN AN D USER", token, user);
 
   const [fields, setFields] = useState([]);
   const [form, setForm] = useState({
@@ -25,10 +24,9 @@ export default function CustomFields() {
   }, []);
 
   const fetchFields = async () => {
-    const data = await getCustomFields();
-    console.log("RESPONSE CFF", data);
+    const response = await getCustomFields();
 
-    setFields(data);
+    setFields(response?.data || []);
   };
 
   const createField = async () => {

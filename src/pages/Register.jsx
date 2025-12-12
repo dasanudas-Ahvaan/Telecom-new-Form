@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import StepEmailVerification from "../components/Register/StepEmailVerification";
 import StepTwo from "../components/Register/StepTwo";
 import {
@@ -6,6 +6,7 @@ import {
   verifyOtp as v_otp_api,
   sendOtp as s_otp_api,
 } from "../api/Register";
+import { getCustomFields } from "../api/CustomField";
 
 const initialData = {
   email: "",
@@ -25,7 +26,7 @@ const initialData = {
   previousAssociations: "",
   volunteerPrograms: "",
   aadhar: "",
-  extraFields: "",
+  extraFields: {},
 };
 
 export default function MemberRegistration() {
@@ -37,9 +38,34 @@ export default function MemberRegistration() {
 
   const [cooldown, setCooldown] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [exFields, setExFields] = useState([]);
+  useEffect(() => {
+    fetchFields();
+  }, []);
+
+  const fetchFields = async () => {
+    const response = await getCustomFields();
+    if (Array.isArray(response?.data)) setExFields(response?.data);
+  };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const extraFields = exFields.map((field) => field.label);
+
+    if (extraFields.includes(name)) {
+      setFormData((prev) => ({
+        ...prev,
+        extraFields: {
+          ...prev.extraFields,
+          [name]: value,
+        },
+      }));
+      return;
+    } else
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
   };
 
   // STEP 1 – Send OTP
@@ -100,6 +126,8 @@ export default function MemberRegistration() {
     setMessage("");
 
     try {
+      console.log("Submitting form data:", formData);
+      return;
       const res = await registerMember(formData);
 
       const data = await res.json();
@@ -146,6 +174,7 @@ export default function MemberRegistration() {
           formData={formData}
           submitForm={submitForm}
           message={message}
+          exFields={exFields}
         />
       )}
     </main>
