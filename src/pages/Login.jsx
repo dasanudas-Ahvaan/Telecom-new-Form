@@ -33,7 +33,6 @@ const Login = () => {
       const { token, data } = response;
       saveToken(token);
       saveUser(data);
-      console.log("JAI SHRI RAMMMMMM", response);
     } catch (error) {
       setFormData(initialFormData);
       setErr(error.message);

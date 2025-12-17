@@ -126,8 +126,6 @@ export default function MemberRegistration() {
     setMessage("");
 
     try {
-      console.log("Submitting form data:", formData);
-      // return;
       const data = await registerMember(formData);
       setMessage(data.message);
 

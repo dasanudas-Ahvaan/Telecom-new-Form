@@ -4,7 +4,6 @@ export const BASE_URL = import.meta.env.VITE_BACKEND_API;
 export const getCustomFields = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/custom-field/`);
-    console.log("CFF RESPONSE", response);
     if (response.status === 200) {
       return response.data;
     } else {
