@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import {
   createCustomField,
   deleteCustomField,
@@ -47,7 +46,7 @@ export default function CustomFields() {
     <div className="p-6 max-w-xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Manage Custom Fields</h2>
 
-      <div className="bg-black p-4 rounded shadow mb-6">
+      <div className="bg-black/40 p-4 rounded shadow mb-6">
         <label>Label</label>
         <input
           className="border p-2 w-full mb-2"
@@ -58,7 +57,7 @@ export default function CustomFields() {
 
         <label>Data Type</label>
         <select
-          className="border p-2 w-full mb-2 bg-black"
+          className="border p-2 w-full mb-2 bg-black/20"
           onChange={(e) => setForm({ ...form, type: e.target.value })}
         >
           <option value="text">Text</option>
@@ -99,9 +98,11 @@ export default function CustomFields() {
           key={f._id}
           className="p-3 bg-gray-600 rounded mb-2 flex justify-between"
         >
-          <p>
-            {f.label} - Data Type:-({f.type})
-          </p>
+          <strong>{f.label}</strong>
+          <small>
+            ({f.type}
+            {f.required ? ", required" : ""})
+          </small>
           <button onClick={() => deleteField(f._id)} className="text-red-600">
             Delete
           </button>
