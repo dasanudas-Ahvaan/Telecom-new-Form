@@ -34,13 +34,33 @@ export default function StepTwo({
             onChange={handleChange}
             required
           />
-          <Input
-            label="Gender"
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            required
-          />
+          <div className="">
+            <label className="font-normal text-gray-400 text-lg py-[0.4rem]">
+              Gender{"*"}
+            </label>
+            <select
+              name="gender"
+              value={formData["gender"]}
+              onChange={handleChange}
+              className="font-light dark:bg-violet-900 bg-gray-900 w-full max-w-sm focus:outline-none md:text-[20px]/8  rounded-md px-1 pt-[0.8rem] pb-[0.8rem]  placeholder-crypto_violet dark:placeholder-gray-400 capitalize text-gray-400"
+            >
+              <option
+                className="font-light text-gray-400 bg-black/90 dark:text-gray-400"
+                value=""
+              >
+                Select Gender
+              </option>
+              {["male", "female", "other"].map((t, idx) => (
+                <option
+                  className="font-light text-gray-400 bg-black/90 dark:text-gray-400 capitalize"
+                  key={idx}
+                  value={t}
+                >
+                  {t}
+                </option>
+              ))}
+            </select>
+          </div>
           <Input
             label="Date of Birth"
             type="date"
