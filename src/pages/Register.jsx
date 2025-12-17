@@ -127,10 +127,8 @@ export default function MemberRegistration() {
 
     try {
       console.log("Submitting form data:", formData);
-      return;
-      const res = await registerMember(formData);
-
-      const data = await res.json();
+      // return;
+      const data = await registerMember(formData);
       setMessage(data.message);
 
       if (data.success) setFormData(initialData);
