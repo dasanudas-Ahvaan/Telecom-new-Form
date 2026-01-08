@@ -29,11 +29,9 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "isVerified") {
-      value = value === "true";
-    }
-    const extraFields = exFields.map((field) => field.label);
+      const { name, value: rawValue } = e.target;
+      const value = name === "isVerified" ? rawValue === "true" : rawValue;
+       const extraFields = exFields.map((field) => field.label);
     if (extraFields.includes(name)) {
       setFormData((prev) => ({
         ...prev,

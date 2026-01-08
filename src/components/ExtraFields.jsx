@@ -4,8 +4,6 @@ const ExtraFields = ({ exFields, formData, handleChange }) => {
   return (
     <>
       {exFields.map((field) => {
-        
-        // -------- TEXT / NUMBER / EMAIL / DATE ----------
         if (field.type !== "checkbox" && field.type !== "select") {
           return (
             <Input
@@ -20,10 +18,10 @@ const ExtraFields = ({ exFields, formData, handleChange }) => {
           );
         }
 
-        // -------- SELECT ----------
         if (field.type === "select") {
           return (
-            <label key={field._id} className="flex flex-col gap-1 text-gray-400">
+            /* Changed text-gray-400 to text-black */
+            <label key={field._id} className="flex flex-col gap-1 text-black font-medium">
               <span>
                 {field.label}
                 {field.required && "*"}
@@ -34,13 +32,13 @@ const ExtraFields = ({ exFields, formData, handleChange }) => {
                 value={formData.extraFields[field.label] || ""}
                 onChange={handleChange}
                 required={field.required}
-                className="p-3 border rounded-lg focus:ring-2 focus:ring-red-500 bg-gray-900"
+                /* Changed bg-gray-900 to bg-white and added text-black */
+                className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 bg-white text-black"
               >
-                <option value="">Select</option>
-
+                <option value="" className="text-black">Select</option>
                 {field.options && field.options.length > 0 &&
                   field.options.map((option, idx) => (
-                    <option key={idx} value={option.trim()}>
+                    <option key={idx} value={option.trim()} className="text-black">
                       {option.trim()}
                     </option>
                   ))}
@@ -49,10 +47,10 @@ const ExtraFields = ({ exFields, formData, handleChange }) => {
           );
         }
 
-        // -------- CHECKBOX ----------
         if (field.type === "checkbox") {
           return (
-            <label key={field._id} className="flex items-center gap-2 text-gray-400">
+            /* Changed text-gray-400 to text-black */
+            <label key={field._id} className="flex items-center gap-2 text-black font-medium">
               <input
                 type="checkbox"
                 name={field.label}
@@ -65,7 +63,8 @@ const ExtraFields = ({ exFields, formData, handleChange }) => {
                     },
                   })
                 }
-                className="h-5 w-5 rounded focus:ring-2 focus:ring-red-500 bg-gray-900"
+                /* Changed bg-gray-900 to bg-white */
+                className="h-5 w-5 rounded border-gray-300 focus:ring-2 focus:ring-red-500 bg-white"
               />
               <span>
                 {field.label}
@@ -74,7 +73,6 @@ const ExtraFields = ({ exFields, formData, handleChange }) => {
             </label>
           );
         }
-
         return null;
       })}
     </>

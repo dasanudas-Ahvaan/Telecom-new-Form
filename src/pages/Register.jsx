@@ -35,10 +35,10 @@ export default function MemberRegistration() {
   const [loading, setLoading] = useState(false);
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [message, setMessage] = useState("");
-
   const [cooldown, setCooldown] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
   const [exFields, setExFields] = useState([]);
+
   useEffect(() => {
     fetchFields();
   }, []);
@@ -50,30 +50,22 @@ export default function MemberRegistration() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const extraFields = exFields.map((field) => field.label);
+    const isExtra = exFields.some((field) => field.label === name);
 
-    if (extraFields.includes(name)) {
+    if (isExtra) {
       setFormData((prev) => ({
         ...prev,
-        extraFields: {
-          ...prev.extraFields,
-          [name]: value,
-        },
+        extraFields: { ...prev.extraFields, [name]: value },
       }));
-      return;
-    } else
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  // STEP 1 – Send OTP
   const sendOtp = async () => {
     if (cooldown) return;
     setLoading(true);
     setMessage("");
-
     try {
       const data = await s_otp_api({ email: formData.email });
       setMessage(data.message);
@@ -96,21 +88,12 @@ export default function MemberRegistration() {
     }
   };
 
-  // STEP 1 – Verify OTP
   const verifyOtp = async () => {
     setVerifyLoading(true);
     setMessage("");
-
     try {
-      const data = await v_otp_api({
-        email: formData.email,
-        otp: formData.otp,
-      });
-
-      if (data.success) {
-        setStep(2);
-      }
-
+      const data = await v_otp_api({ email: formData.email, otp: formData.otp });
+      if (data.success) setStep(2);
       setMessage(data.message);
     } catch (err) {
       setMessage(err.message || "OTP verification failed.");
@@ -119,16 +102,13 @@ export default function MemberRegistration() {
     }
   };
 
-  // STEP 2 – Submit Full Registration
   const submitForm = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-
     try {
       const data = await registerMember(formData);
       setMessage(data.message);
-
       if (data.success) setFormData(initialData);
     } catch (err) {
       setMessage(err.message || "Submission failed.");
@@ -138,41 +118,51 @@ export default function MemberRegistration() {
   };
 
   return (
-    <main className="max-w-3xl mx-auto px-4">
-      <header className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-red-700">Member Registration</h1>
-        <p className="text-gray-600">
+    /* Center the form on the background and ensure transparency */
+    <main className="min-h-screen pt-24 pb-12 px-4 flex flex-col items-center bg-transparent">
+      
+      {/* Header with glass effect text background */}
+      <header className="mb-8 text-center bg-white/80 backdrop-blur-md p-4 rounded-xl border border-white/70 shadow-lg max-w-2xl w-full">
+        <h1 className="text-4xl font-bold text-white-700 drop-shadow-md">
+          Member Registration
+        </h1>
+        <p className="text-white-800 font-medium mt-2">
           Join our mission by completing registration.
         </p>
       </header>
 
-      {step === 1 ? (
-        <StepEmailVerification
-          loading={loading}
-          verifyLoading={verifyLoading}
-          handleChange={handleChange}
-          sendOtp={sendOtp}
-          verifyOtp={verifyOtp}
-          formData={formData}
-          message={
-            cooldown
-              ? `You can resend OTP after ${Math.floor(timeLeft / 60)}:${
-                  timeLeft % 60
-                } min.`
-              : message
-          }
-          cooldown={cooldown}
-        />
-      ) : (
-        <StepTwo
-          loading={loading}
-          handleChange={handleChange}
-          formData={formData}
-          submitForm={submitForm}
-          message={message}
-          exFields={exFields}
-        />
-      )}
+      {/* Main Form Container - Semi-transparent white card */}
+      <div className="max-w-3xl w-full bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/70 overflow-hidden">
+        <div className="p-8 md:p-12">
+          {step === 1 ? (
+            <StepEmailVerification
+              loading={loading}
+              verifyLoading={verifyLoading}
+              handleChange={handleChange}
+              sendOtp={sendOtp}
+              verifyOtp={verifyOtp}
+              formData={formData}
+              message={
+                cooldown
+                  ? `You can resend OTP after ${Math.floor(timeLeft / 60)}:${
+                      timeLeft % 60
+                    } min.`
+                  : message
+              }
+              cooldown={cooldown}
+            />
+          ) : (
+            <StepTwo
+              loading={loading}
+              handleChange={handleChange}
+              formData={formData}
+              submitForm={submitForm}
+              message={message}
+              exFields={exFields}
+            />
+          )}
+        </div>
+      </div>
     </main>
   );
 }

@@ -9,8 +9,8 @@ function StepEmailVerification({
   cooldown,
 }) {
   return (
-    <section className="bg-gray-400 p-6 rounded-xl shadow-md space-y-6">
-      <h2 className="text-xl font-semibold text-gray-700">
+    <section className="bg-white-400 p-6 rounded-xl shadow-md space-y-6">
+      <h2 className="text-xl font-semibold text-black-700">
         Step 1: Verify Email
       </h2>
 
@@ -21,7 +21,7 @@ function StepEmailVerification({
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className="p-3 border rounded-lg focus:ring-2 focus:ring-red-600"
+          className="p-3 border rounded-lg focus:ring-2 focus:ring-white-600"
           required
         />
       </label>

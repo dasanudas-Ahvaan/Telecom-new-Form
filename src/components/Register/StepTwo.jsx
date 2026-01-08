@@ -15,7 +15,7 @@ export default function StepTwo({
       className="space-y-10 bg-white p-6 rounded-xl shadow-md"
     >
       <section>
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">
+        <h2 className="text-xl font-semibold text-white-700 mb-4">
           Personal Information
         </h2>
 
@@ -35,24 +35,24 @@ export default function StepTwo({
             required
           />
           <div className="">
-            <label className="font-normal text-gray-400 text-lg py-[0.4rem]">
+            <label className="font-normal text-black-400 text-lg py-[0.4rem]">
               Gender{"*"}
             </label>
             <select
               name="gender"
               value={formData["gender"]}
               onChange={handleChange}
-              className="font-light dark:bg-violet-900 bg-gray-900 w-full max-w-sm focus:outline-none md:text-[20px]/8  rounded-md px-1 pt-[0.8rem] pb-[0.8rem]  placeholder-crypto_violet dark:placeholder-gray-400 capitalize text-gray-400"
+              className="font-light dark:bg-violet-900 bg-white w-full max-w-sm focus:outline-none md:text-[20px]/8  rounded-md px-1 pt-[0.8rem] pb-[0.8rem]  placeholder-crypto_violet dark:placeholder-black-400 capitalize text-black-400"
             >
               <option
-                className="font-light text-gray-400 bg-black/90 dark:text-gray-400"
+                className="font-dark text-black-900 bg-white/90 dark:text-black-900"
                 value=""
               >
                 Select Gender
               </option>
               {["male", "female", "other"].map((t, idx) => (
                 <option
-                  className="font-light text-gray-400 bg-black/90 dark:text-gray-400 capitalize"
+                  className="font-dark text-black-900 bg-white/90 dark:text-black-900 capitalize"
                   key={idx}
                   value={t}
                 >

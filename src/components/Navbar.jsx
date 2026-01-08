@@ -35,7 +35,13 @@ export default function Navbar() {
       <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-40">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo */}
-          <h1 className="text-xl font-bold text-amber-400">MyBrand</h1>
+          <div className="cursor-pointer" onClick={() => navigate("/register")}>
+            <img 
+              src="/logos/ahvaan_logo.jpg" 
+              alt="Ahvaan Logo" 
+              className="h-20 w-auto object-contain" 
+            />
+          </div>
 
           {/* Desktop Links */}
           <ul className="hidden md:flex gap-8 text-gray-700 font-medium">
