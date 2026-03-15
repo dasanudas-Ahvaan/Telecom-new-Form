@@ -202,7 +202,7 @@ export default function MemberRegistration() {
         </p>
       </header>
 
-      {step === 51 ? (
+      {step === 21 ? (
         <StepEmailVerification
           loading={loading}
           verifyLoading={verifyLoading}

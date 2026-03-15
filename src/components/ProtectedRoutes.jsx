@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children, redirectTo }) => {
   const isAuthenticated = Boolean(token);
   const isPermitted = user?.role === "admin" || user?.role === "super_user";
   if (!isAuthenticated) {
-    return <Navigate to={"/"} replace />;
+    return <Navigate to={"/admin"} replace />;
   } else if (!isPermitted) {
     return <Navigate to={"/noAccess"} />;
   }

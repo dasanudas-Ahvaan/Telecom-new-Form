@@ -122,7 +122,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
       onClick={handleOutSideClick}
     >
       <div
-        className={`bg-gray-200 dark:bg-sdl fixed top-0 right-0 font-jose w-[50vw] max-[915px]:w-[80vw] border-r-4 h-screen border-l-[10px] capitalize dark:border-yellow border-gray-400 pl-6 text-left flex flex-col items-start justify-start gap-8 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+        className={`bg-gray-200 dark:bg-sdl fixed top-0 right-0 font-jose w-[50vw] max-[915px]:w-[80vw] border-r-4 h-screen border-l-10 capitalize dark:border-yellow border-gray-400 pl-6 text-left flex flex-col items-start justify-start gap-8 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
