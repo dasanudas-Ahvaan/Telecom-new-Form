@@ -143,6 +143,16 @@ input:-webkit-autofill {
   .registerationButtons{
     @apply w-full text-red-500 py-2 rounded-lg  transition disabled:opacity-50 bg-orange-300  hover:border hover:border-red-600 cursor-pointer shadow-sm;
   }
+  .rightSideBar_Edit_Delete_Button{
+    @apply rounded-lg whitespace-nowrap font-medium text-base p-2 border-2 border-red-400 cursor-pointer hover:bg-red-500 bg-orange-300 text-white
+  }
+  .rightSideBar_Submit_Button{
+    @apply rounded-lg whitespace-nowrap font-medium text-base p-2 border-2 hover:border-blue-800 cursor-pointer text-blue-200 bg-blue-700
+  }
+  .deleteMemberButton{
+    @apply rounded-lg whitespace-nowrap font-medium text-base p-2 border-2 hover:border-red-800 cursor-pointer text-red-200 bg-red-700
+  }
+
 }
 
 /* custom.css */

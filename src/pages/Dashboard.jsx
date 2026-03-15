@@ -65,11 +65,11 @@ const Dashboard = () => {
     setMembers((prev) => prev.filter((m) => m._id !== deletedMemberId));
   };
   return (
-    <div className="bg-green-300 w-screen">
+    <div className="bg-blue-300 w-screen">
       <Search value={search} setSearch={setSearch} />
       <div>
         <button
-          className="bg-gray-200 text-white"
+          className="rounded-lg whitespace-nowrap font-medium text-base py-2 px-5 border-2 hover:border-blue-800 cursor-pointer text-blue-200 bg-blue-700"
           onClick={() => navigate("/dashboard/field")}
         >
           Manage Custom Fields

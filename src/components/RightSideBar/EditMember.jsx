@@ -466,9 +466,9 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
           {err && (
             <label className="text-red-500 text-left mt-4 mb-2">{err}</label>
           )}
-          <div className="flex items-center gap-4 resp flex-nowrap mt-2">
+          <div className="flex items-center gap-4 resp flex-nowrap my-6">
             <button
-              className="text-white"
+              className="rightSideBar_Submit_Button"
               disabled={isLoading}
               title={isLoading ? <Loader /> : "Add"}
               type="submit"
@@ -476,7 +476,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
               Submit
             </button>
             <button
-              className="text-white"
+              className="rightSideBar_Edit_Delete_Button"
               title="Close"
               onClick={() => {
                 onClose();
@@ -490,7 +490,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
               Close
             </button>
             <button
-              className="text-red-500 bg-red-700"
+              className="deleteMemberButton"
               title="Delete Member"
               onClick={() => handleDelete()}
               type="button"
