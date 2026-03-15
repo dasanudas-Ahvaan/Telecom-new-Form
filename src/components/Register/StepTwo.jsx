@@ -8,12 +8,20 @@ export default function StepTwo({
   submitForm,
   message,
   exFields = [],
+  errors = {}, // Accept errors prop
 }) {
   return (
     <form
       onSubmit={submitForm}
-      className="space-y-10 bg-white p-6 rounded-xl shadow-md"
+      className="space-y-10 bg-orange-50 p-6 rounded-xl shadow-md"
     >
+      {/* Global Error Message */}
+      {Object.keys(errors).length > 0 && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+          <strong className="font-bold">Please fix the errors below.</strong>
+        </div>
+      )}
+
       <section>
         <h2 className="text-xl font-semibold text-gray-700 mb-4">
           Personal Information
@@ -26,6 +34,7 @@ export default function StepTwo({
             value={formData.fullName}
             onChange={handleChange}
             required
+            error={errors.fullName}
           />
           <Input
             label="Phone"
@@ -33,6 +42,7 @@ export default function StepTwo({
             value={formData.phone}
             onChange={handleChange}
             required
+            error={errors.phone}
           />
           <div className="">
             <label className="font-normal text-gray-400 text-lg py-[0.4rem]">
@@ -42,7 +52,11 @@ export default function StepTwo({
               name="gender"
               value={formData["gender"]}
               onChange={handleChange}
-              className="font-light dark:bg-violet-900 bg-gray-900 w-full max-w-sm focus:outline-none md:text-[20px]/8  rounded-md px-1 pt-[0.8rem] pb-[0.8rem]  placeholder-crypto_violet dark:placeholder-gray-400 capitalize text-gray-400"
+              className={`font-light w-full max-w-sm md:text-[20px]/8 rounded-md px-1 pt-[0.8rem] pb-[0.8rem] capitalize focus:outline-none focus:ring-2 ${
+                errors.gender
+                  ? "border-red-500 bg-red-50 text-red-900 focus:ring-red-500"
+                  : "dark:bg-violet-900 bg-gray-900 text-gray-400 border-gray-300 focus:ring-red-500"
+              }`}
             >
               <option
                 className="font-light text-gray-400 bg-black/90 dark:text-gray-400"
@@ -60,6 +74,9 @@ export default function StepTwo({
                 </option>
               ))}
             </select>
+            {errors.gender && (
+              <p className="text-red-500 text-xs mt-1">{errors.gender}</p>
+            )}
           </div>
           <Input
             label="Date of Birth"
@@ -68,6 +85,7 @@ export default function StepTwo({
             value={formData.dateOfBirth}
             onChange={handleChange}
             required
+            error={errors.dateOfBirth}
           />
           <Input
             label="Aadhar Number"
@@ -75,6 +93,7 @@ export default function StepTwo({
             value={formData.aadhar}
             onChange={handleChange}
             required
+            error={errors.aadhar}
           />
         </div>
       </section>
@@ -92,6 +111,7 @@ export default function StepTwo({
             value={formData.education}
             onChange={handleChange}
             required
+            error={errors.education}
           />
           <Input
             label="Profession"
@@ -99,6 +119,7 @@ export default function StepTwo({
             value={formData.profession}
             onChange={handleChange}
             required
+            error={errors.profession}
           />
         </div>
       </section>
@@ -114,6 +135,7 @@ export default function StepTwo({
             value={formData.addressLine1}
             onChange={handleChange}
             required
+            error={errors.addressLine1}
           />
           <Input
             label="Address Line 2"
@@ -121,6 +143,7 @@ export default function StepTwo({
             value={formData.addressLine2}
             onChange={handleChange}
             required
+            error={errors.addressLine2}
           />
           <Input
             label="Pincode"
@@ -128,6 +151,7 @@ export default function StepTwo({
             value={formData.pincode}
             onChange={handleChange}
             required
+            error={errors.pincode}
           />
           <Input
             label="City"
@@ -135,6 +159,7 @@ export default function StepTwo({
             value={formData.city}
             onChange={handleChange}
             required
+            error={errors.city}
           />
           <Input
             label="State"
@@ -142,6 +167,7 @@ export default function StepTwo({
             value={formData.state}
             onChange={handleChange}
             required
+            error={errors.state}
           />
           <Input
             label="Country"
@@ -149,6 +175,7 @@ export default function StepTwo({
             value={formData.country}
             onChange={handleChange}
             required
+            error={errors.country}
           />
         </div>
       </section>
@@ -161,12 +188,14 @@ export default function StepTwo({
             name="previousAssociations"
             value={formData.previousAssociations}
             onChange={handleChange}
+            error={errors.previousAssociations}
           />
           <Input
             label="Volunteer Programs"
             name="volunteerPrograms"
             value={formData.volunteerPrograms}
             onChange={handleChange}
+            error={errors.volunteerPrograms}
           />
           {Array.isArray(exFields) && exFields.length > 0 && (
             <div className="flex flex-col items-start">
@@ -197,6 +226,7 @@ export default function StepTwo({
       {message && (
         <p className="text-center text-blue-600 text-sm">{message}</p>
       )}
+     
     </form>
   );
 }

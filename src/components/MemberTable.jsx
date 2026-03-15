@@ -3,7 +3,7 @@ import React from "react";
 const MemberTable = ({ members, onView }) => {
   return (
     <div className="w-full py-4 my-2 overflow-x-auto bg-gray-800">
-      <div className="min-w-max mx-auto bg-gray-600">
+      <div className="min-w-max mx-auto bg-gray-600 mx-4">
         <table className="min-w-[900px] w-full border-collapse text-left">
           <thead>
             <tr className="bg-gray-100 text-gray-700">

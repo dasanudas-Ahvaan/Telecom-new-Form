@@ -9,7 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoutes";
 
 function App() {
   return (
-    <>
+    <div className="">
       <Layout>
         <Routes>
           <Route
@@ -31,7 +31,7 @@ function App() {
           />
         </Routes>
       </Layout>
-    </>
+    </div>
   );
 }
 

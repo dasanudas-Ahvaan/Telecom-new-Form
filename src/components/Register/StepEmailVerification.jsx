@@ -9,19 +9,19 @@ function StepEmailVerification({
   cooldown,
 }) {
   return (
-    <section className="bg-gray-400 p-6 rounded-xl shadow-md space-y-6">
-      <h2 className="text-xl font-semibold text-gray-700">
+    <section className="p-6 rounded-xl space-y-6">
+      <h2 className="text-xl font-semibold text-red-700 bg-orange-300 rounded py-2">
         Step 1: Verify Email
       </h2>
 
-      <label className="flex flex-col gap-1">
+      <label className="flex flex-col items-start w-full gap-1">
         <span>Email *</span>
         <input
           type="email"
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className="p-3 border rounded-lg focus:ring-2 focus:ring-red-600"
+          className="p-3 border rounded-lg focus:ring-4 focus:ring-red-600 w-full"
           required
         />
       </label>
@@ -29,26 +29,26 @@ function StepEmailVerification({
       <button
         onClick={sendOtp}
         disabled={loading || cooldown}
-        className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+        className="registerationButtons"
       >
         {"Send OTP"}
       </button>
 
       {/* OTP INPUT */}
-      <label className="flex flex-col gap-1">
+      <label className="flex flex-col items-start gap-1">
         <span>Enter OTP</span>
         <input
           type="text"
           name="otp"
           value={formData.otp}
           onChange={handleChange}
-          className="p-3 border rounded-lg focus:ring-2 focus:ring-red-600"
+          className="p-3 border rounded-lg focus:ring-4 focus:ring-red-600 w-full"
         />
       </label>
 
       <button
         onClick={verifyOtp}
-        className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+        className="registerationButtons"
         disabled={verifyLoading}
       >
         {verifyLoading ? "Verifying..." : "Verify OTP"}
