@@ -7,6 +7,7 @@ import {
   sendOtp as s_otp_api,
 } from "../api/Register";
 import { getCustomFields } from "../api/CustomField";
+import { useToast } from "../components/ToastContext";
 
 const initialData = {
   email: "",
@@ -39,6 +40,8 @@ export default function MemberRegistration() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [exFields, setExFields] = useState([]);
 
+  const showToast = useToast();
+
   useEffect(() => {
     fetchFields();
   }, []);
@@ -62,13 +65,28 @@ export default function MemberRegistration() {
     }
   };
 
+  const isValidEmail = (email) => {
+    // Pattern: [characters] @ [characters] . [2+ characters]
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!email) return false;
+
+    return emailRegex.test(email);
+  }
+
   const sendOtp = async () => {
     if (cooldown) return;
+    if (!isValidEmail(formData.email)) {
+      showToast("Not a Vaild Email.", "error")
+      return;
+    }
     setLoading(true);
     setMessage("");
     try {
       const data = await s_otp_api({ email: formData.email });
       setMessage(data.message);
+      showToast(data.message);
+      console.log(data)
       setCooldown(true);
       setTimeLeft(300);
       const timer = setInterval(() => {
@@ -82,6 +100,7 @@ export default function MemberRegistration() {
         });
       }, 1000);
     } catch (err) {
+        showToast(err.message, "error");
       setMessage(err.message || "OTP sending failed.");
     } finally {
       setLoading(false);
@@ -95,23 +114,121 @@ export default function MemberRegistration() {
       const data = await v_otp_api({ email: formData.email, otp: formData.otp });
       if (data.success) setStep(2);
       setMessage(data.message);
+      showToast(data.message, "success")
     } catch (err) {
+        showToast(err.message || "OTP verification failed.", "error")
       setMessage(err.message || "OTP verification failed.");
     } finally {
       setVerifyLoading(false);
     }
   };
 
+
+  const validateForm = (data) => {
+    const isEmpty = (val) => !val || val.length === 0;
+
+    // Helper to check if string exceeds length
+    const exceeds = (val, limit) => (val ? val.length > limit : false);
+
+    // 1. Full Name
+    if (isEmpty(data.fullName)) {
+      showToast("Full name is required");
+      return false;
+    }
+    if (exceeds(data.fullName, 60)) {
+      showToast("Full name cannot exceed 60 characters");
+      return false;
+    }
+
+    // 2. Phone
+    if (!/^\d{10}$/.test(data.phone)) {
+      showToast("Enter a valid 10-digit phone number");
+      return false;
+    }
+
+    // 3. Gender & DOB
+    if (isEmpty(data.gender)) {
+      showToast("Please select gender");
+      return false;
+    }
+    if (isEmpty(data.dateOfBirth)) {
+      showToast("Date of birth is required");
+      return false;
+    }
+
+    // 4. Education & Profession
+    if (isEmpty(data.education)) {
+      showToast("Education is required");
+      return false;
+    }
+    if (exceeds(data.education, 100)) {
+      showToast("Education details are too long (max 100)");
+      return false;
+    }
+    if (isEmpty(data.profession)) {
+      showToast("Profession is required");
+      return false;
+    }
+    if (exceeds(data.profession, 100)) {
+      showToast("Profession details are too long (max 100)");
+      return false;
+    }
+
+    // 5. Address Line 1 & 2
+    if (isEmpty(data.addressLine1)) {
+      showToast("Address Line 1 is required");
+      return false;
+    }
+    if (exceeds(data.addressLine1, 150)) {
+      showToast("Address Line 1 is too long (max 150)");
+      return false;
+    }
+    if (exceeds(data.addressLine2, 150)) {
+      showToast("Address Line 2 is too long (max 150)");
+      return false;
+    }
+
+    // 6. City, State, Country
+    if (isEmpty(data.city) || exceeds(data.city, 50)) {
+      showToast("Valid City name is required (max 50)");
+      return false;
+    }
+    if (isEmpty(data.state) || exceeds(data.state, 50)) {
+      showToast("Valid State name is required (max 50)");
+      return false;
+    }
+    if (isEmpty(data.country) || exceeds(data.country, 50)) {
+      showToast("Valid Country name is required (max 50)");
+      return false;
+    }
+
+    // 7. Pincode (6 digits)
+    if (!/^\d{6}$/.test(data.pincode)) {
+      showToast("Pincode must be exactly 6 digits");
+      return false;
+    }
+
+    // 8. Aadhar (12 digits)
+    if (!/^\d{12}$/.test(data.aadhar)) {
+      showToast("Aadhar must be exactly 12 digits");
+      return false;
+    }
+
+    return true; 
+  };
   const submitForm = async (e) => {
     e.preventDefault();
+    if (!validateForm(formData)) return
     setLoading(true);
     setMessage("");
     try {
       const data = await registerMember(formData);
       setMessage(data.message);
+      showToast(data.message, "success");
       if (data.success) setFormData(initialData);
     } catch (err) {
       setMessage(err.message || "Submission failed.");
+      showToast(err.message, "error");
     } finally {
       setLoading(false);
     }

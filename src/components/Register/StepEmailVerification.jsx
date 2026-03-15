@@ -35,6 +35,7 @@ function StepEmailVerification({
       </button>
 
       {/* OTP INPUT */}
+      {cooldown&&<>
       <label className="flex flex-col gap-1">
         <span>Enter OTP</span>
         <input
@@ -54,6 +55,7 @@ function StepEmailVerification({
         {verifyLoading ? "Verifying..." : "Verify OTP"}
       </button>
 
+</>}
       {message && (
         <p className="text-center text-sm text-blue-600">{message}</p>
       )}
