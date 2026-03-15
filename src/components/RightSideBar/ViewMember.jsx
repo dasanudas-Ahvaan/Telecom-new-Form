@@ -1,91 +1,194 @@
-const ViewMember = ({
-  isOpen,
-  onClose,
-  member,
-  handleEdit,
-}) => {
+import { useEffect } from "react";
+
+const ViewMember = ({ isOpen, onClose, member, handleEdit }) => {
   const handleOutSideClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
+  useEffect(() => {
+    const handleEsc = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [onClose]);
+
+  if (!member) return null;
+
+  const formatKey = (key) =>
+    key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+
+  const renderValue = (key, value) => {
+    if (key === "dateOfBirth") return new Date(value).toDateString();
+    if (key === "isVerified")
+      return (
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            value
+              ? "bg-green-900/30 text-green-400 border border-green-900/50"
+              : "bg-orange-800 text-orange-400 border border-orange-700"
+          }`}
+        >
+          {value ? "Verified" : "Not Verified"}
+        </span>
+      );
+    if (key === "status")
+      return (
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            value === "active"
+              ? "bg-green-900/30 text-green-400 border border-green-900/50"
+              : "bg-orange-800 text-orange-400 border border-orange-700"
+          }`}
+        >
+          {value === "active" ? "Active" : "Inactive"}
+        </span>
+      );
+    return value || "N/A";
+  };
+
+  const standardFields = Object.entries(member).filter(
+    ([key]) => !["_id", "extraFields", "createdAt", "updatedAt"].includes(key)
+  );
+
+  const extraFields = member.extraFields
+    ? Object.entries(member.extraFields)
+    : [];
+
   return (
-    <div
-      className={`fixed inset-0 z-1000 dark:bg-crypto_violet/30 bg-gray-500/30 flex justify-end transition-all duration-300 ease-in-out ${
-        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}
-      onClick={handleOutSideClick}
-    >
+    <>
+      {/* Outer Overlay - Handles Fade In/Out */}
       <div
-        className={`bg-gray-200 dark:bg-sdl fixed top-0 right-0 font-jose w-[60vw] max-[915px]:w-[90vw] border-r-4 h-screen border-l-10 dark:border-crypto_violet border-gray-400 pl-2 md:pl-6 text-left flex flex-col items-start justify-start gap-6 transform transition-transform duration-300 ease-in-out overflow-y-auto py-10 ${
-          isOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed inset-0 z-1000 bg-black/60 flex justify-end transition-all duration-300 ease-in-out ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
+        onClick={handleOutSideClick}
       >
-        <button
-          className="rightSideBar_Edit_Delete_Button"
-          onClick={() => {
-            handleEdit(member);
-            onClose();
-          }}
+        {/* Inner Sidebar - Handles Slide Animation */}
+        <div
+          className={`bg-gray-900 fixed top-0 right-0 font-jose w-[50vw] max-[915px]:w-[80vw] border-l-4 border-orange-500 h-screen pl-6 text-left flex flex-col items-start justify-start gap-6 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+            isOpen ? "translate-x-0" : "translate-x-full"
+          }`}
         >
-          Edit
-        </button>
-        {Object.entries(member || {})
-          .filter(([key]) => !["_id", "extraFields"].includes(key))
-          .map(([key, value], index) => {
-            return (
-              <div
-                key={index}
-                className="flex items-start justify-between gap-8 w-full resp"
+          {/* Header */}
+          <div className="flex items-center justify-between w-full pr-6 pt-6 pb-4 border-b border-gray-800 shrink-0">
+            <div>
+              <h2 className="text-xl font-bold text-white tracking-wide">
+                Member Details
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                {member.fullName || "Member Profile"}
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
+              title="Close"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <p className="font-normal text-[18px]/4 pb-[0.4rem] sm:w-[38vw] lg:w-[18vw] text-black capitalize">
-                  {key.replace(/([A-Z])/g, " $1")}
-                </p>
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
 
-                <p className="font-light text-[20px]/5 mb-[0.4rem] break-all text-black text-wrap md:w-full rounded-md">
-                  {key === "dateOfBirth"
-                    ? new Date(value).toDateString()
-                    : key === "isVerified"
-                    ? value
-                      ? "Yes"
-                      : "No"
-                    : value || "N/A"}
-                </p>
+          {/* Scrollable Content - Two Column Layout */}
+          <div className="w-full pr-6 flex flex-col gap-4">
+            {/* Standard Fields */}
+            {standardFields.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-orange-500 uppercase tracking-wider pb-2 border-b border-gray-800">
+                  General Information
+                </h3>
+                {standardFields.map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="grid grid-cols-3 gap-4 items-start py-3 border-b border-gray-800/50 hover:bg-gray-800/30 rounded-lg px-3 transition-colors"
+                  >
+                    <div className="col-span-1">
+                      <p className="text-sm font-medium text-gray-500 capitalize">
+                        {formatKey(key)}
+                      </p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-base text-gray-200 wrap-break-words">
+                        {renderValue(key, value)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            );
-          })}
-        {member &&
-          member.extraFields &&
-          Object.keys(member.extraFields).length > 0 && (
-            <>
-              <hr className="w-full border-gray-400" />
-              <h2 className="text-2xl font-semibold mb-4">Extra Fields</h2>
-              {Object.entries(member.extraFields).map(([key, value], index) => (
-                <div
-                  key={index}
-                  className="flex items-start justify-between gap-8 w-full resp"
-                >
-                  <p className="font-normal text-[18px]/4 pb-[0.4rem] sm:w-[38vw] lg:w-[18vw] text-black capitalize">
-                    {key.replace(/([A-Z])/g, " $1")}
-                  </p>
+            )}
 
-                  <p className="font-light text-[20px]/5 mb-[0.4rem] break-all text-black text-wrap md:w-full rounded-md">
-                    {value || "N/A"}
-                  </p>
-                </div>
-              ))}
-            </>
-          )}
-        <button
-          title={"Close"}
-          onClick={handleOutSideClick}
-          className="rightSideBar_Edit_Delete_Button"
-        >
-          Close
-        </button>
+            {/* Extra Fields */}
+            {extraFields.length > 0 && (
+              <div className="space-y-2 pt-4">
+                <h3 className="text-xs font-semibold text-purple-500 uppercase tracking-wider pb-2 border-b border-gray-800">
+                  Additional Details
+                </h3>
+                {extraFields.map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="grid grid-cols-3 gap-4 items-start py-3 border-b border-gray-800/50 hover:bg-gray-800/30 rounded-lg px-3 transition-colors"
+                  >
+                    <div className="col-span-1">
+                      <p className="text-sm font-medium text-gray-500 capitalize">
+                        {formatKey(key)}
+                      </p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-base text-gray-200 wrap-break-words">
+                        {value || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer Actions */}
+          <div className="w-full pr-6 pt-4 pb-8 border-t border-gray-800 shrink-0">
+            <button
+              onClick={() => {
+                handleEdit(member);
+                onClose();
+              }}
+              className="w-full py-3.5 rounded-xl font-semibold text-white shadow-lg transition-all duration-200 bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 hover:shadow-orange-900/20 active:scale-[0.98]"
+            >
+              Edit Member
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+
+      {/* Custom Scrollbar */}
+      <style>{`
+        .overflow-y-auto::-webkit-scrollbar {
+          width: 6px;
+        }
+        .overflow-y-auto::-webkit-scrollbar-track {
+          background: #111827;
+        }
+        .overflow-y-auto::-webkit-scrollbar-thumb {
+          background: #374151;
+          border-radius: 3px;
+        }
+        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+          background: #4B5563;
+        }
+      `}</style>
+    </>
   );
 };
 

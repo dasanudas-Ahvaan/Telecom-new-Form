@@ -127,10 +127,10 @@ input:-webkit-autofill {
     @apply font-light dark:bg-violet-900 bg-pink-300 focus:outline-none md:text-[20px]/8 rounded-md px-1 pt-[0.8rem] pb-[0.4rem]  placeholder-crypto_violet dark:placeholder-pink-400 min-h-[10vh] w-full max-w-sm;
   }
   .inputCls {
-    @apply font-light dark:bg-violet-900 bg-pink-300 w-full max-w-sm focus:outline-none md:text-[20px]/8  rounded-md px-1 pt-[0.8rem] pb-[0.4rem]  placeholder-crypto_violet dark:placeholder-pink-400;
+    @apply w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all;
   }
   .statusCls {
-    @apply font-light dark:bg-violet-900 bg-pink-300 w-full max-w-sm focus:outline-none md:text-[20px]/8 rounded-md px-1 pt-[0.8rem] pb-[0.4rem] text-crypto_violet dark:text-pink-400 capitalize;
+    @apply w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all;
   }
   .scrollbar-hide {
     -ms-overflow-style: none; /* IE and Edge */

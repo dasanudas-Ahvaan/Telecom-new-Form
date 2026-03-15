@@ -30,8 +30,9 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let transformedValue = value;
     if (name === "isVerified") {
-      value = value === "true";
+      transformedValue = value === "true"; // Compare with string since select returns string
     }
     const extraFields = exFields.map((field) => field.label);
     if (extraFields.includes(name)) {
@@ -39,14 +40,14 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
         ...prev,
         extraFields: {
           ...prev.extraFields,
-          [name]: value,
+          [name]: transformedValue,
         },
       }));
       return;
     } else
       setFormData((prev) => ({
         ...prev,
-        [name]: value,
+        [name]: transformedValue,
       }));
   };
 
@@ -113,6 +114,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
         extraFields: member.extraFields || {},
       });
     }
+    // console.log("MEMMEM",member)
   }, [member, isOpen]);
   return (
     <div
@@ -122,7 +124,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
       onClick={handleOutSideClick}
     >
       <div
-        className={`bg-gray-200 dark:bg-sdl fixed top-0 right-0 font-jose w-[50vw] max-[915px]:w-[80vw] border-r-4 h-screen border-l-10 capitalize dark:border-yellow border-gray-400 pl-6 text-left flex flex-col items-start justify-start gap-8 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+        className={`bg-gray-900 fixed top-0 right-0 font-jose w-[50vw] max-[915px]:w-[80vw] border-r-4 h-screen border-l-10 capitalize dark:border-yellow border-orange-400 pl-6 text-left flex flex-col items-start justify-start gap-8 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -131,7 +133,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
           className="flex flex-col items-start justify-center"
         >
           <div className="flex flex-col items-start justify-center gap-2 my-4">
-            <label className="font-normal md:text-[28px]/7 text-black">
+            <label className="font-normal md:text-[28px]/7 text-white">
               Full Name
             </label>
             <input
@@ -141,7 +143,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
               name="fullName"
               value={formData["fullName"]}
               onChange={handleChange}
-              className={`font-light dark:bg-violet-900 bg-gray-300 w-full max-w-md focus:outline-none md:text-[20px]/8  rounded-md px-1 pt-[0.8rem] pb-[0.4rem]  placeholder-gray-400 dark:placeholder-gray-400 ${
+              className={`font-light w-full bg-gray-800 border border-gray-700 text-gray-200 max-w-md focus:outline-none md:text-[20px]/8  rounded-md px-1 pt-[0.8rem] pb-[0.4rem] ${
                 formData?.fullName !== "" ? "cursor-not-allowed" : ""
               }`}
               placeholder="Enter Member Name"
@@ -159,8 +161,8 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
                 name="phone"
                 value={formData["phone"]}
                 onChange={handleChange}
-                className={`inputCls ${
-                  formData?.phone !== "" ? "cursor-not-allowed" : ""
+                className={`w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
+                  formData?.phone ? "opacity-60 cursor-not-allowed" : ""
                 }`}
                 placeholder="Enter phone"
               />
