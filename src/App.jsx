@@ -5,7 +5,8 @@ import Dashboard from "./pages/Dashboard";
 import MemberForm from "./pages/Register";
 import Layout from "./components/Layout";
 import CustomFields from "./components/CustomField";
-import ProtectedRoute from "./components/ProtectedRoutes";
+import { ProtectedRoute, SuperUserRoute } from "./components/ProtectedRoutes";
+import NoAccess from "./pages/NoAccess";
 
 function App() {
   return (
@@ -16,11 +17,13 @@ function App() {
             path="/"
             element={<ProtectedRoute children={<Dashboard />} />}
           />
-          <Route
-            path="/admin"
-            element={<Login />}
-          />
+          <Route path="/admin" element={<Login />} />
           <Route path="/register" element={<MemberForm />} />
+          <Route path="/noAccess" element={<NoAccess />} />
+          <Route
+            path="/onboard"
+            element={<SuperUserRoute children={<Dashboard />} />}
+          />
           <Route
             path="/dashboard"
             element={<ProtectedRoute children={<Dashboard />} />}

@@ -1,16 +1,28 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../authContext/AuthContext";
-const ProtectedRoute = ({ children, redirectTo }) => {
+export const ProtectedRoute = ({ children, redirectTo }) => {
   const { token, user } = useAuth();
 
   const isAuthenticated = Boolean(token);
-  const isPermitted = user?.role === "admin" || user?.role === "super_user";
+  const isPermitted = user?.role === "admin";
+  const isSuperUser = user?.role === "super_user";
   if (!isAuthenticated) {
     return <Navigate to={"/admin"} replace />;
-  } else if (!isPermitted) {
+  } else if (!isPermitted && !isSuperUser) {
     return <Navigate to={"/noAccess"} />;
   }
   return children;
 };
 
-export default ProtectedRoute;
+export const SuperUserRoute = ({ children, redirectTo }) => {
+  const { token, user } = useAuth();
+
+  const isAuthenticated = Boolean(token);
+  const isSuperUser = user?.role === "super_user";
+  if (!isAuthenticated) {
+    return <Navigate to={"/admin"} replace />;
+  } else if (!isSuperUser) {
+    return <Navigate to={"/noAccess"} />;
+  }
+  return children;
+};

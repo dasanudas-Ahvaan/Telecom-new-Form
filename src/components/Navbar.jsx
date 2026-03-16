@@ -1,24 +1,14 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../authContext/AuthContext";
-
-const routes = [
-  { name: "Home", link: "/" },
-  // { name: "Dashboard", link: "/dashboard" },
-  { name: "Contact", link: "/contact" },
-  { name: "Register", link: "/register" },
-  { name: "Login", link: "/admin" },
-  { name: "Logout", link: "/logout" },
-];
+import { routes } from "../lib/navbar";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout, token } = useAuth();
-
+  const { logout, token, user } = useAuth();
   // Close mobile menu on Escape key
   useEffect(() => {
     const handleEsc = (e) => e.key === "Escape" && setOpen(false);
@@ -34,6 +24,15 @@ export default function Navbar() {
     }
     setOpen(false);
   };
+
+  const filteredRoutes = routes.filter((f) => {
+    if (token && f.name === "Login") return false;
+    if (!token && f.name === "Logout") return false;
+
+    if (f.role === "super_user" && user?.role !== "super_user") return false;
+
+    return true;
+  });
 
   return (
     <>
@@ -70,31 +69,29 @@ export default function Navbar() {
 
           {/* Desktop Links */}
           <ul className="hidden md:flex items-center gap-8">
-            {routes
-              .filter((f) => (token ? f.name !== "Login" : f.name !== "Logout"))
-              .map((route) => {
-                const isActive = location.pathname === route.link;
-                return (
-                  <li key={route.name}>
-                    <button
-                      onClick={() => handleNavClick(route)}
-                      className={`text-sm font-medium transition-all duration-200 relative py-1 ${
-                        isActive
-                          ? "text-orange-500"
-                          : "text-gray-300 hover:text-white"
+            {filteredRoutes.map((route) => {
+              const isActive = location.pathname === route.link;
+              return (
+                <li key={route.name}>
+                  <button
+                    onClick={() => handleNavClick(route)}
+                    className={`text-sm font-medium transition-all duration-200 relative py-1 ${
+                      isActive
+                        ? "text-orange-500"
+                        : "text-gray-300 hover:text-white"
+                    }`}
+                  >
+                    {route.name}
+
+                    <span
+                      className={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-orange-500 to-red-500 transition-all duration-300 ${
+                        isActive ? "w-full" : "w-0 hover:w-full"
                       }`}
-                    >
-                      {route.name}
-                     
-                      <span
-                        className={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r from-orange-500 to-red-500 transition-all duration-300 ${
-                          isActive ? "w-full" : "w-0 hover:w-full"
-                        }`}
-                      ></span>
-                    </button>
-                  </li>
-                );
-              })}
+                    ></span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
 
           {/* Mobile Hamburger Button */}
@@ -131,38 +128,51 @@ export default function Navbar() {
         <div className="p-5 flex items-center justify-between border-b border-gray-800">
           <div className="flex items-center gap-2">
             <img className="w-8 h-8" src="/alw.svg" alt="Logo" />
-            <h2 className="text-lg font-bold bg-linear-to-r from-orange-600 to-red-500 text-transparent bg-clip-text">Ahvaan</h2>
+            <h2 className="text-lg font-bold bg-linear-to-r from-orange-600 to-red-500 text-transparent bg-clip-text">
+              Ahvaan
+            </h2>
           </div>
           <button
             onClick={() => setOpen(false)}
             className="text-gray-400 hover:text-white transition-colors p-1"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
           </button>
         </div>
 
         <ul className="p-4 flex flex-col gap-2">
-          {routes
-            .filter((f) => (token ? f.name !== "Login" : f.name !== "Logout"))
-            .map((route) => {
-              const isActive = location.pathname === route.link;
-              return (
-                <li key={route.name}>
-                  <button
-                    onClick={() => handleNavClick(route)}
-                    className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                      isActive
-                        ? "bg-orange-500/10 text-orange-500 border border-orange-500/20"
-                        : "text-gray-400 hover:bg-gray-800 hover:text-white"
-                    }`}
-                  >
-                    {route.name}
-                  </button>
-                </li>
-              );
-            })}
+          {filteredRoutes.map((route) => {
+            const isActive = location.pathname === route.link;
+            return (
+              <li key={route.name}>
+                <button
+                  onClick={() => handleNavClick(route)}
+                  className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-orange-500/10 text-orange-500 border border-orange-500/20"
+                      : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                  }`}
+                >
+                  {route.name}
+                </button>
+              </li>
+            );
+          })}
         </ul>
-        
+
         {/* Mobile Footer Info */}
         <div className="absolute bottom-0 w-full p-4 border-t border-gray-800 bg-gray-900">
           <p className="text-xs text-center text-gray-500">
