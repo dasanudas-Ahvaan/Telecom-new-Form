@@ -7,6 +7,7 @@ import Layout from "./components/Layout";
 import CustomFields from "./components/CustomField";
 import { ProtectedRoute, SuperUserRoute } from "./components/ProtectedRoutes";
 import NoAccess from "./pages/NoAccess";
+import AdminManagement from "./pages/AdminManagement";
 
 function App() {
   return (
@@ -21,8 +22,8 @@ function App() {
           <Route path="/register" element={<MemberForm />} />
           <Route path="/noAccess" element={<NoAccess />} />
           <Route
-            path="/onboard"
-            element={<SuperUserRoute children={<Dashboard />} />}
+            path="/admin_management"
+            element={<SuperUserRoute children={<AdminManagement />} />}
           />
           <Route
             path="/dashboard"

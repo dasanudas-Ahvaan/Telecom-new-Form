@@ -4,9 +4,9 @@
 
 @theme {
   --color-lavendar: #9e72c7;
-  --color-sdl: #807E87;
-  --color-sl_violet: #C1A2E0;
-  --color-crypto_violet: #220A3B;
+  --color-sdl: #807e87;
+  --color-sl_violet: #c1a2e0;
+  --color-crypto_violet: #220a3b;
   --height-header: 44.8vw;
   --font-jose: "Josefin Sans", sans-serif;
   --breakpoint-mm: 23rem;
@@ -38,7 +38,6 @@ a {
 a:hover {
   color: #535bf2;
 }
-
 
 h1 {
   font-size: 3.2em;
@@ -76,7 +75,6 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
-
 
 input:-webkit-autofill {
   background-color: #2f1c26 !important; /* Tailwind's bg-pink-200 */
@@ -140,34 +138,47 @@ input:-webkit-autofill {
     display: none; /* Chrome, Safari, Opera */
   }
 
-  .registerationButtons{
+  .registerationButtons {
     @apply w-full text-red-500 py-2 rounded-lg  transition disabled:opacity-50 bg-orange-300  hover:border hover:border-red-600 cursor-pointer shadow-sm;
   }
-  .rightSideBar_Edit_Delete_Button{
-    @apply rounded-lg whitespace-nowrap font-medium text-base p-2 border-2 border-red-400 cursor-pointer hover:bg-red-500 bg-orange-300 text-white
+  .rightSideBar_Edit_Delete_Button {
+    @apply rounded-lg whitespace-nowrap font-medium text-base p-2 border-2 border-red-400 cursor-pointer hover:bg-red-500 bg-orange-300 text-white;
   }
-  .rightSideBar_Submit_Button{
-    @apply rounded-lg whitespace-nowrap font-medium text-base p-2 border-2 hover:border-blue-800 cursor-pointer text-blue-200 bg-blue-700
+  .rightSideBar_Submit_Button {
+    @apply rounded-lg whitespace-nowrap font-medium text-base p-2 border-2 hover:border-blue-800 cursor-pointer text-blue-200 bg-blue-700;
   }
-  .deleteMemberButton{
-    @apply rounded-lg whitespace-nowrap font-medium text-base p-2 border-2 hover:border-red-800 cursor-pointer text-red-200 bg-red-700
+  .deleteMemberButton {
+    @apply rounded-lg whitespace-nowrap font-medium text-base p-2 border-2 hover:border-red-800 cursor-pointer text-red-200 bg-red-700;
   }
-
 }
 
 @keyframes fadeIn {
-  from { 
-    opacity: 0; 
-    transform: translateY(-10px); 
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeInPass {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-fadeInPass {
+  animation: fadeInPass 0.2s ease-out;
 }
 
 /* custom.css */
@@ -176,7 +187,7 @@ input:-webkit-autofill {
 :root {
   --scrollbar-bg: #111827;
   --scrollbar-thumb: #374151;
-  --scrollbar-thumb-hover: #4B5563;
+  --scrollbar-thumb-hover: #4b5563;
   --scrollbar-width: 6px;
 }
 
