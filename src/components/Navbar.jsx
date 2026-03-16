@@ -5,7 +5,7 @@ import { useAuth } from "../authContext/AuthContext";
 
 const routes = [
   { name: "Home", link: "/" },
-  { name: "Dashboard", link: "/dashboard" },
+  // { name: "Dashboard", link: "/dashboard" },
   { name: "Contact", link: "/contact" },
   { name: "Register", link: "/register" },
   { name: "Login", link: "/admin" },

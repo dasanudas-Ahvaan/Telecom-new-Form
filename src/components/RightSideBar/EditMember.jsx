@@ -468,7 +468,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
           {err && (
             <label className="text-red-500 text-left mt-4 mb-2">{err}</label>
           )}
-          <div className="flex items-center gap-4 resp flex-nowrap my-6">
+          <div className="flex gap-4 flex-col items-start sm:items-center sm:flex-row flex-nowrap my-6">
             <button
               className="rightSideBar_Submit_Button"
               disabled={isLoading}

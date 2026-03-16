@@ -5,109 +5,358 @@ import {
   getCustomFields,
 } from "../api/CustomField";
 import { useAuth } from "../authContext/AuthContext";
+import Loader from "./Loader";
+
+// Icon Components
+const PlusIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>
+);
+const TrashIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="3 6 5 6 21 6"></polyline>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+  </svg>
+);
+const FieldIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+    <polyline points="14 2 14 8 20 8"></polyline>
+    <line x1="16" y1="13" x2="8" y2="13"></line>
+    <line x1="16" y1="17" x2="8" y2="17"></line>
+    <polyline points="10 9 9 9 8 9"></polyline>
+  </svg>
+);
+const CheckIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+);
 
 export default function CustomFields() {
   const { token, user } = useAuth();
 
   const [fields, setFields] = useState([]);
   const [form, setForm] = useState({
-    name: "",
     label: "",
     type: "text",
     required: false,
     options: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     fetchFields();
   }, []);
 
-  const fetchFields = async () => {
-    const response = await getCustomFields();
+  // Clear messages after 3 seconds
+  useEffect(() => {
+    if (error || success) {
+      const timer = setTimeout(() => {
+        setError("");
+        setSuccess("");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
 
-    setFields(response?.data || []);
+  const fetchFields = async () => {
+    try {
+      const response = await getCustomFields();
+      setFields(response?.data || []);
+    } catch (err) {
+      setError("Failed to load custom fields");
+    }
   };
 
   const createField = async () => {
-    const payload = { ...form };
-    if (form.type !== "select") payload.options = [];
-    else payload.options = form.options.split(",").map((o) => o.trim());
+    if (!form.label.trim()) {
+      setError("Label is required");
+      return;
+    }
 
-    await createCustomField(payload, user?._id, token);
-    fetchFields();
+    try {
+      setIsLoading(true);
+      setError("");
+      setSuccess("");
+
+      const payload = { ...form };
+      if (form.type !== "select") {
+        payload.options = [];
+      } else {
+        payload.options = form.options
+          .split(",")
+          .map((o) => o.trim())
+          .filter((o) => o);
+      }
+
+      await createCustomField(payload, user?._id, token);
+      setSuccess("Field created successfully!");
+      setForm({ label: "", type: "text", required: false, options: "" });
+      fetchFields();
+    } catch (err) {
+      setError(err.message || "Failed to create field");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const deleteField = async (id) => {
-    await deleteCustomField(id, user?._id, token);
-    fetchFields();
+    if (!window.confirm("Are you sure you want to delete this field?")) return;
+
+    try {
+      setIsLoading(true);
+      setError("");
+      setSuccess("");
+
+      await deleteCustomField(id, user?._id, token);
+      setSuccess("Field deleted successfully!");
+      fetchFields();
+    } catch (err) {
+      setError(err.message || "Failed to delete field");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getTypeBadgeColor = (type) => {
+    const colors = {
+      text: "bg-blue-900/30 text-blue-400 border-blue-900/50",
+      number: "bg-green-900/30 text-green-400 border-green-900/50",
+      email: "bg-purple-900/30 text-purple-400 border-purple-900/50",
+      date: "bg-orange-900/30 text-orange-400 border-orange-900/50",
+      select: "bg-pink-900/30 text-pink-400 border-pink-900/50",
+      checkbox: "bg-cyan-900/30 text-cyan-400 border-cyan-900/50",
+    };
+    return colors[type] || "bg-gray-800 text-gray-400 border-gray-700";
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Manage Custom Fields</h2>
+    <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-3 bg-linear-to-br from-orange-500 to-red-600 rounded-xl shadow-lg shadow-orange-900/20">
+            <FieldIcon />
+          </div>
+          <div className="text-left">
+            <h2 className="text-2xl font-bold text-white tracking-tight">
+              Manage Custom Fields
+            </h2>
+            <p className="text-gray-400 text-sm mt-1">
+              Create and manage custom fields for member registration
+            </p>
+          </div>
+        </div>
 
-      <div className="bg-black/40 p-4 rounded shadow mb-6">
-        <label>Label</label>
-        <input
-          className="border p-2 w-full mb-2"
-          placeholder="Label"
-          onChange={(e) => setForm({ ...form, label: e.target.value })}
-          required
-        />
-
-        <label>Data Type</label>
-        <select
-          className="border p-2 w-full mb-2 bg-black/20"
-          onChange={(e) => setForm({ ...form, type: e.target.value })}
-        >
-          <option value="text">Text</option>
-          <option value="number">Number</option>
-          <option value="email">Email</option>
-          <option value="date">Date</option>
-          <option value="select">Select (Dropdown)</option>
-          <option value="checkbox">Checkbox</option>
-        </select>
-
-        {form.type === "select" && (
-          <input
-            className="border p-2 w-full mb-2"
-            placeholder="Options (comma separated)"
-            onChange={(e) => setForm({ ...form, options: e.target.value })}
-          />
+        {/* Success/Error Messages */}
+        {(error || success) && (
+          <div
+            className={`mb-6 p-4 rounded-xl border transition-all duration-300 ${
+              error
+                ? "bg-red-900/30 border-red-800 text-red-400"
+                : "bg-green-900/30 border-green-800 text-green-400"
+            }`}
+          >
+            <p className="text-sm font-medium">{error || success}</p>
+          </div>
         )}
 
-        <label className="flex items-center mb-2">
-          <input
-            type="checkbox"
-            onChange={(e) => setForm({ ...form, required: e.target.checked })}
-          />
-          <span className="ml-2">Required</span>
-        </label>
+        {/* Create Field Form */}
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <PlusIcon />
+          Add New Field
+        </h3>
+        <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6 mb-8 shadow-xl">
+          <div className="space-y-4">
+            {/* Label */}
+            <div className="text-left">
+              <label className="block text-sm font-medium text-orange-400 mb-2">
+                Field Label
+              </label>
+              <input
+                type="text"
+                value={form.label}
+                onChange={(e) => setForm({ ...form, label: e.target.value })}
+                placeholder="e.g., Emergency Contact"
+                className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              />
+            </div>
 
-        <button
-          onClick={createField}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Add Field
-        </button>
-      </div>
+            {/* Data Type */}
+            <div className="text-left">
+              <label className="block text-sm font-medium text-orange-400 mb-2">
+                Data Type
+              </label>
+              <select
+                value={form.type}
+                onChange={(e) => setForm({ ...form, type: e.target.value })}
+                className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all cursor-pointer"
+              >
+                <option value="text">Text</option>
+                <option value="number">Number</option>
+                <option value="email">Email</option>
+                <option value="date">Date</option>
+                <option value="select">Select (Dropdown)</option>
+                <option value="checkbox">Checkbox</option>
+              </select>
+            </div>
 
-      <h3 className="font-bold mb-2">Existing Fields:</h3>
-      {fields.map((f) => (
-        <div
-          key={f._id}
-          className="p-3 bg-gray-600 rounded mb-2 flex justify-between"
-        >
-          <strong>{f.label}</strong>
-          <small>
-            ({f.type}
-            {f.required ? ", required" : ""})
-          </small>
-          <button onClick={() => deleteField(f._id)} className="text-red-600">
-            Delete
-          </button>
+            {/* Options (for Select) */}
+            {form.type === "select" && (
+              <div className="animate-fadeIn">
+                <label className="block text-sm font-medium text-gray-400 mb-2">
+                  Options{" "}
+                  <span className="text-gray-500">(comma separated)</span>
+                </label>
+                <input
+                  type="text"
+                  value={form.options}
+                  onChange={(e) =>
+                    setForm({ ...form, options: e.target.value })
+                  }
+                  placeholder="e.g., Option 1, Option 2, Option 3"
+                  className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                />
+              </div>
+            )}
+
+            {/* Required Checkbox */}
+            <div className="flex items-center gap-3 pt-2">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.required}
+                  onChange={(e) =>
+                    setForm({ ...form, required: e.target.checked })
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-orange-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                <span className="ml-3 text-sm font-medium text-gray-400">
+                  Required Field
+                </span>
+              </label>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              onClick={createField}
+              disabled={isLoading || !form.label.trim()}
+              className="w-full py-3.5 rounded-xl font-semibold text-white shadow-lg transition-all duration-200 bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 hover:shadow-orange-900/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <Loader />
+                  <span>Creating...</span>
+                </>
+              ) : (
+                <>
+                  <PlusIcon />
+                  <span>Add Field</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
-      ))}
+
+        {/* Existing Fields List */}
+        <div>
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <FieldIcon />
+            Existing Fields ({fields.length})
+          </h3>
+
+          {fields.length === 0 ? (
+            <div className="bg-gray-800/30 border border-gray-700 rounded-xl p-8 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-gray-700/50 rounded-full flex items-center justify-center">
+                <FieldIcon />
+              </div>
+              <p className="text-gray-400 font-medium">No custom fields yet</p>
+              <p className="text-gray-500 text-sm mt-1">
+                Create your first field above
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {fields.map((f) => (
+                <div
+                  key={f._id}
+                  className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 flex items-center justify-between hover:border-orange-500/30 transition-all duration-200 group"
+                >
+                  <div className="flex items-start justify-start gap-4">
+                    <div
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border ${getTypeBadgeColor(f.type)}`}
+                    >
+                      {f.type}
+                    </div>
+                    <div className="flex gap-1">
+                      <p className="text-white font-medium">{f.label}</p>
+                      {f.required && (
+                        <sup className="inline-flex items-center gap-1 text-xs text-orange-400">
+                          * Required
+                        </sup>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => deleteField(f._id)}
+                    disabled={isLoading}
+                    className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-all duration-200 disabled:opacity-50"
+                    title="Delete Field"
+                  >
+                    <TrashIcon />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
