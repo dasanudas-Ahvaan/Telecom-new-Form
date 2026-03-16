@@ -88,7 +88,7 @@ const MemberTable = ({ members, onView }) => {
                         <ActivityIcon /> Active
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-gray-500 border border-gray-700">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-700 text-red-100 border border-red-700">
                         Inactive
                       </span>
                     )}

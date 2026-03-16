@@ -9,6 +9,7 @@ import ViewMember from "../components/RightSideBar/ViewMember";
 import EditMember from "../components/RightSideBar/EditMember";
 import Loader from "../components/Loader";
 import { FilterButton } from "../components/FilterButton";
+import Modal from "../components/Modal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const Dashboard = () => {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("unverified");
   const [isLoading, setIsLoading] = useState(true);
+  const [modalError, setModalError] = useState("");
   const [counts, setCounts] = useState({
     verified: 0,
     unverified: 0,
@@ -40,12 +42,13 @@ const Dashboard = () => {
         const response = await getAllMembers(token, user._id, filterType);
         if (response.success) {
           setMembers(response.data);
-          // Update counts if provided by backend
-          if (response.counts) {
-            setCounts(response.counts);
-          }
+          setCounts((prev) => ({
+            ...prev,
+            [filterType]: response.data.length,
+          }));
         }
       } catch (error) {
+        setModalError(error.message+". Please login again");
         console.error("Error fetching members:", error.message);
       } finally {
         setIsLoading(false);
@@ -121,13 +124,12 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {/* Filter Buttons */}
         <div className="flex flex-wrap gap-3 mb-6">
           <FilterButton
             active={filterType === "unverified"}
             onClick={() => setFilterType("unverified")}
             count={counts.unverified}
-            className={`${filterType === "unverified" ? "border-2 border-orange-600" : ""}`}
+            color="orange"
           >
             <svg
               className="w-4 h-4"
@@ -144,11 +146,12 @@ const Dashboard = () => {
             </svg>
             Unverified
           </FilterButton>
+
           <FilterButton
             active={filterType === "verified"}
             onClick={() => setFilterType("verified")}
             count={counts.verified}
-             className={`${filterType === "verified" ? "border-2 border-green-600 bg-green-500" : ""}`}
+            color="green"
           >
             <svg
               className="w-4 h-4"
@@ -170,7 +173,7 @@ const Dashboard = () => {
             active={filterType === "inactive"}
             onClick={() => setFilterType("inactive")}
             count={counts.inactive}
-             className={`${filterType === "inactive" ? "border-2 border-red-600 bg-red-500" : ""}`}
+            color="red"
           >
             <svg
               className="w-4 h-4"
@@ -188,14 +191,12 @@ const Dashboard = () => {
             Inactive
           </FilterButton>
         </div>
-
         {/* Controls Section (Search) */}
         <div className="mb-6">
           <div className="relative max-w-md flex items-start">
             <Search value={search} setSearch={setSearch} />
           </div>
         </div>
-
         {/* Loading State */}
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
@@ -235,14 +236,12 @@ const Dashboard = () => {
             )}
           </>
         )}
-
         <ViewMember
           isOpen={isViewOpen}
           onClose={handleCloseView}
           member={selectedMember}
           handleEdit={handleEditMember}
         />
-
         <EditMember
           isOpen={isEditOpen.view}
           onClose={() => setIsEditOpen({ view: false, member: null })}
@@ -251,6 +250,15 @@ const Dashboard = () => {
           onDelete={handleMemberDelete}
         />
       </div>
+      <Modal
+        isOpen={modalError}
+        onClose={() => setModalError("")}
+        title={"Error Occured"}
+        message={modalError}
+        type={"error"}
+        size="md"
+        closeOnOverlay={modalError}
+      />
     </div>
   );
 };

@@ -8,7 +8,7 @@ import {
 } from "../api/Register";
 import { getCustomFields } from "../api/CustomField";
 import { validateStepTwo } from "../utils/validateStepTwo";
-import Modal from "../components/Model";
+import Modal from "../components/Modal";
 
 const initialData = {
   email: "",
