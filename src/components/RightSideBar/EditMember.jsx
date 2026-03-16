@@ -8,10 +8,26 @@ import { deleteMember, editMember } from "../../api/Member";
 const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
   const { token, user } = useAuth();
 
-  const initialFormData = {
+   const initialFormData = {
+    _id: "",
     email: "",
     fullName: "",
     phone: "",
+    isVerified: false,
+    status: "active",
+    gender: "",
+    dateOfBirth: "",
+    education: "",
+    profession: "",
+    addressLine1: "",
+    addressLine2: "",
+    pincode: "",
+    city: "",
+    state: "",
+    country: "",
+    previousAssociations: "",
+    volunteerPrograms: "",
+    aadhar: "",
     extraFields: {},
   };
 

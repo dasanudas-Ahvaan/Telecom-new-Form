@@ -171,3 +171,29 @@ input:-webkit-autofill {
 }
 
 /* custom.css */
+/* src/index.css */
+
+:root {
+  --scrollbar-bg: #111827;
+  --scrollbar-thumb: #374151;
+  --scrollbar-thumb-hover: #4B5563;
+  --scrollbar-width: 6px;
+}
+
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}

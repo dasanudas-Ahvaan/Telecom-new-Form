@@ -183,23 +183,7 @@ const ViewMember = ({ isOpen, onClose, member, handleEdit }) => {
           </div>
         </div>
       </div>
-
-      {/* Custom Scrollbar */}
-      <style>{`
-        .overflow-y-auto::-webkit-scrollbar {
-          width: 6px;
-        }
-        .overflow-y-auto::-webkit-scrollbar-track {
-          background: #111827;
-        }
-        .overflow-y-auto::-webkit-scrollbar-thumb {
-          background: #374151;
-          border-radius: 3px;
-        }
-        .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-          background: #4B5563;
-        }
-      `}</style>
+     
     </>
   );
 };

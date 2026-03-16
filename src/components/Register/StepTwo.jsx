@@ -1,5 +1,7 @@
+import React from "react";
 import ExtraFields from "../ExtraFields";
 import Input from "../Input";
+import { UserIcon, BookIcon, HomeIcon, FileIcon, CheckCircleIcon } from "../icons/index";
 
 export default function StepTwo({
   loading,
@@ -8,24 +10,34 @@ export default function StepTwo({
   submitForm,
   message,
   exFields = [],
-  errors = {}, // Accept errors prop
+  errors = {},
 }) {
   return (
     <form
       onSubmit={submitForm}
-      className="space-y-10 bg-orange-50 p-6 rounded-xl shadow-md"
+      className="space-y-8 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 shadow-xl text-left"
     >
       {/* Global Error Message */}
       {Object.keys(errors).length > 0 && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-          <strong className="font-bold">Please fix the errors below.</strong>
+        <div className="bg-red-900/30 border border-red-800 text-red-400 px-4 py-3 rounded-xl flex items-center gap-2 animate-fadeIn">
+          <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="font-medium">Please fix the errors below.</span>
         </div>
       )}
 
+      {/* Personal Information */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">
-          Personal Information
-        </h2>
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-700">
+          <div className="p-2.5 bg-linear-to-br from-orange-500 to-red-600 rounded-xl shadow-lg shadow-orange-900/20">
+            <UserIcon />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-white">Personal Information</h2>
+            <p className="text-gray-400 text-sm mt-0.5">Enter your basic details</p>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Input
@@ -35,6 +47,8 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.fullName}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
           <Input
             label="Phone"
@@ -43,39 +57,29 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.phone}
+            className="bg-gray-900/50 border-gray-700 text-orange-500 focus:ring-orange-500"
           />
-          <div className="">
-            <label className="font-normal text-gray-400 text-lg py-[0.4rem]">
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
               Gender{"*"}
             </label>
             <select
               name="gender"
-              value={formData["gender"]}
+              value={formData.gender}
               onChange={handleChange}
-              className={`font-light w-full max-w-sm md:text-[20px]/8 rounded-md px-1 pt-[0.8rem] pb-[0.8rem] capitalize focus:outline-none focus:ring-2 ${
-                errors.gender
-                  ? "border-red-500 bg-red-50 text-red-900 focus:ring-red-500"
-                  : "dark:bg-violet-900 bg-gray-900 text-gray-400 border-gray-300 focus:ring-red-500"
+              className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all appearance-none cursor-pointer ${
+                errors.gender ? "border-red-500 bg-red-900/20" : "border-gray-700"
               }`}
             >
-              <option
-                className="font-light text-gray-400 bg-black/90 dark:text-gray-400"
-                value=""
-              >
-                Select Gender
-              </option>
-              {["male", "female", "other"].map((t, idx) => (
-                <option
-                  className="font-light text-gray-400 bg-black/90 dark:text-gray-400 capitalize"
-                  key={idx}
-                  value={t}
-                >
+              <option value="">Select Gender</option>
+              {["male", "female", "other"].map((t) => (
+                <option key={t} value={t} className="bg-gray-900 capitalize">
                   {t}
                 </option>
               ))}
             </select>
             {errors.gender && (
-              <p className="text-red-500 text-xs mt-1">{errors.gender}</p>
+              <p className="text-red-400 text-xs mt-1">{errors.gender}</p>
             )}
           </div>
           <Input
@@ -86,6 +90,8 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.dateOfBirth}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
           <Input
             label="Aadhar Number"
@@ -94,15 +100,23 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.aadhar}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
         </div>
       </section>
 
-      {/* Education */}
+      {/* Education & Profession */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">
-          Education & Profession
-        </h2>
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-700">
+          <div className="p-2.5 bg-linear-to-br from-blue-500 to-cyan-600 rounded-xl shadow-lg shadow-blue-900/20">
+            <BookIcon />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-white">Education & Profession</h2>
+            <p className="text-gray-400 text-sm mt-0.5">Your academic and work background</p>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Input
@@ -112,6 +126,8 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.education}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
           <Input
             label="Profession"
@@ -120,13 +136,23 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.profession}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
         </div>
       </section>
 
       {/* Address */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">Address</h2>
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-700">
+          <div className="p-2.5 bg-linear-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg shadow-green-900/20">
+            <HomeIcon />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-white">Address</h2>
+            <p className="text-gray-400 text-sm mt-0.5">Your current residence</p>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Input
@@ -136,6 +162,8 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.addressLine1}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
           <Input
             label="Address Line 2"
@@ -144,6 +172,8 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.addressLine2}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
           <Input
             label="Pincode"
@@ -152,6 +182,8 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.pincode}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
           <Input
             label="City"
@@ -160,6 +192,8 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.city}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
           <Input
             label="State"
@@ -168,6 +202,8 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.state}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
           <Input
             label="Country"
@@ -176,12 +212,24 @@ export default function StepTwo({
             onChange={handleChange}
             required
             error={errors.country}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
         </div>
       </section>
 
-      {/* Additional */}
+      {/* Additional Details */}
       <section>
+        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-700">
+          <div className="p-2.5 bg-linear-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg shadow-purple-900/20">
+            <FileIcon />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-white">Additional Details</h2>
+            <p className="text-gray-400 text-sm mt-0.5">Optional information</p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Input
             label="Previous Associations"
@@ -189,6 +237,8 @@ export default function StepTwo({
             value={formData.previousAssociations}
             onChange={handleChange}
             error={errors.previousAssociations}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
           <Input
             label="Volunteer Programs"
@@ -196,37 +246,50 @@ export default function StepTwo({
             value={formData.volunteerPrograms}
             onChange={handleChange}
             error={errors.volunteerPrograms}
+            className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            
           />
-          {Array.isArray(exFields) && exFields.length > 0 && (
-            <div className="flex flex-col items-start">
-              <h2 className="text-xl font-semibold text-gray-700 mb-4">
-                Additional Details
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <ExtraFields
-                  exFields={exFields}
-                  formData={formData}
-                  handleChange={handleChange}
-                />
-              </div>
-            </div>
-          )}
         </div>
+
+        {Array.isArray(exFields) && exFields.length > 0 && (
+          <div className="mt-6 pt-6 border-t border-gray-700">
+            <ExtraFields
+              exFields={exFields}
+              formData={formData}
+              handleChange={handleChange}
+              errors={errors}
+            />
+          </div>
+        )}
       </section>
 
-      <footer className="text-center">
+      {/* Submit Button */}
+      <footer className="pt-6 border-t border-gray-700">
         <button
+          type="submit"
           disabled={loading}
-          className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+          className="w-full py-3.5 rounded-xl font-semibold text-white shadow-lg transition-all duration-200 bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 hover:shadow-orange-900/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          {loading ? "Submitting..." : "Submit Registration"}
+          {loading ? (
+            <>
+              <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <span>Submitting...</span>
+            </>
+          ) : (
+            <>
+              <CheckCircleIcon />
+              <span>Submit Registration</span>
+            </>
+          )}
         </button>
-      </footer>
 
-      {message && (
-        <p className="text-center text-blue-600 text-sm">{message}</p>
-      )}
-     
+        {message && (
+          <p className="text-center text-green-400 text-sm mt-4 animate-fadeIn">{message}</p>
+        )}
+      </footer>
     </form>
   );
 }
