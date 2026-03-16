@@ -64,24 +64,18 @@ export default function MemberRegistration() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // 1. INPUT SANITIZATION (OnChange)
-    // Prevent letters in numeric fields immediately
     if (["phone", "aadhar", "pincode"].includes(name)) {
-      const numericValue = value.replace(/[^0-9]/g, ""); // Remove non-digits
-      // Optional: Limit length to match schema
+      const numericValue = value.replace(/[^0-9]/g, "");
       if (name === "phone" && numericValue.length > 10) return;
       if (name === "aadhar" && numericValue.length > 12) return;
       if (name === "pincode" && numericValue.length > 6) return;
 
-      // Update state with sanitized value
       setFormData((prev) => ({ ...prev, [name]: numericValue }));
 
-      // Clear error for this field if it exists
       if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
       return;
     }
 
-    // 2. STANDARD HANDLING FOR TEXT FIELDS
     const extraFields = exFields.map((field) => field.label);
 
     if (extraFields.includes(name)) {
@@ -93,7 +87,6 @@ export default function MemberRegistration() {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
 
-    // Clear error when user starts typing again
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -156,19 +149,15 @@ export default function MemberRegistration() {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-    setErrors({}); // Reset errors
-
-    // 1. Run Validation
+    setErrors({});
     const validationErrors = validateStepTwo(formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setLoading(false);
-      // Scroll to top to see errors
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
-    // 2. Submit if valid
     try {
       const data = await registerMember(formData);
       setMessage(data.message);
@@ -194,7 +183,7 @@ export default function MemberRegistration() {
   };
 
   return (
-    <main className="max-w-3xl mx-auto px-4 bg-orange-50 border-x min-h-screen">
+    <main className="max-w-3xl mx-auto px-4 bg-gray-900 min-h-screen">
       <header className="mb-8 text-center pt-5">
         <h1 className="text-3xl font-bold text-red-700">Member Registration</h1>
         <p className="text-gray-600">
@@ -202,7 +191,7 @@ export default function MemberRegistration() {
         </p>
       </header>
 
-      {step === 21 ? (
+      {step === 1 ? (
         <StepEmailVerification
           loading={loading}
           verifyLoading={verifyLoading}

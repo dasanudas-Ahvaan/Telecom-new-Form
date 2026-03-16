@@ -1,10 +1,9 @@
-// Updated FilterButton component
 export const FilterButton = ({
   active,
   onClick,
   children,
   count,
-  color = "orange", // Default color
+  color = "orange", 
   className,
 }) => {
   const colorStyles = {

@@ -93,7 +93,7 @@ input:-webkit-autofill {
 
 @layer base {
   body {
-    @apply bg-orange-100 dark:bg-sdl dark:text-pink-300 text-crypto_violet font-jose;
+    @apply bg-gray-950;
   }
 }
 @layer utilities {
