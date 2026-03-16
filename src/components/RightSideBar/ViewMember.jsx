@@ -48,7 +48,8 @@ const ViewMember = ({ isOpen, onClose, member, handleEdit }) => {
   };
 
   const standardFields = Object.entries(member).filter(
-    ([key]) => !["_id", "extraFields", "createdAt", "updatedAt"].includes(key)
+    ([key]) =>
+      !["_id", "extraFields", "createdAt", "updatedAt", "__v"].includes(key),
   );
 
   const extraFields = member.extraFields
@@ -76,30 +77,41 @@ const ViewMember = ({ isOpen, onClose, member, handleEdit }) => {
               <h2 className="text-xl font-bold text-white tracking-wide">
                 Member Details
               </h2>
-              <p className="text-sm text-gray-500 mt-1">
-                {member.fullName || "Member Profile"}
+              <p className="text-orange-600 text-lg mt-1">
+                {member.fullName || "Member Profile"} - {member.phone}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
-              title="Close"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            <div className="flex gap-4 flex-col sm:flex-row items-end sm:items-start">
+              <button
+                onClick={() => {
+                  handleEdit(member);
+                  onClose();
+                }}
+                className="rounded px-2 sm:self-stretch tracking-tighter bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 hover:shadow-orange-900/20 active:scale-[0.98]"
               >
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
+                Edit Member
+              </button>
+              <button
+                onClick={onClose}
+                className="p-2 w-max text-gray-400 hover:text-white bg-red-900 hover:bg-red-800 rounded-full transition-colors"
+                title="Close"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* Scrollable Content - Two Column Layout */}

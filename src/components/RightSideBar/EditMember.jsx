@@ -34,6 +34,15 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
     if (name === "isVerified") {
       transformedValue = value === "true"; // Compare with string since select returns string
     }
+    if (["phone", "aadhar", "pincode"].includes(name)) {
+      const numericValue = value.replace(/[^0-9]/g, "");
+      if (name === "phone" && numericValue.length > 10) return;
+      if (name === "aadhar" && numericValue.length > 12) return;
+      if (name === "pincode" && numericValue.length > 6) return;
+
+      setFormData((prev) => ({ ...prev, [name]: numericValue }));
+      return;
+    }
     const extraFields = exFields.map((field) => field.label);
     if (extraFields.includes(name)) {
       setFormData((prev) => ({
@@ -143,7 +152,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
               name="fullName"
               value={formData["fullName"]}
               onChange={handleChange}
-              className={`font-light w-full bg-gray-800 border border-gray-700 text-gray-200 max-w-md focus:outline-none md:text-[20px]/8  rounded-md px-1 pt-[0.8rem] pb-[0.4rem] ${
+              className={`font-light w-full bg-gray-800 border border-red-700 text-gray-200 max-w-md focus:outline-none md:text-[20px]/8  rounded-md px-1 pt-[0.8rem] pb-[0.4rem] ${
                 formData?.fullName !== "" ? "cursor-not-allowed" : ""
               }`}
               placeholder="Enter Member Name"
@@ -161,7 +170,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
                 name="phone"
                 value={formData["phone"]}
                 onChange={handleChange}
-                className={`w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
+                className={`w-full bg-gray-800 border border-red-700 rounded-lg px-3 py-2.5 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
                   formData?.phone ? "opacity-60 cursor-not-allowed" : ""
                 }`}
                 placeholder="Enter phone"

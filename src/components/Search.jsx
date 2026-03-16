@@ -6,7 +6,7 @@ function Search({ search, setSearch }) {
     <input
       type="text"
       className="border p-2 rounded my-2"
-      placeholder="Search…"
+      placeholder="Search email or name…"
       value={search}
       onChange={(e) => setSearch(e.target.value)}
     />

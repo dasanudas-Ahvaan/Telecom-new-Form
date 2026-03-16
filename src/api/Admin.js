@@ -1,13 +1,14 @@
 import axios from "axios";
 export const BASE_URL = import.meta.env.VITE_BACKEND_API;
 
-export const getAllMembers = async (token, userid) => {
+export const getAllMembers = async (token, userid, status = "unverified") => {
   if (!userid) {
     throw new Error("User ID is required to fetch members");
   }
   try {
     const response = await axios.get(`${BASE_URL}/auth/${userid}`, {
       headers: { authorization: `Bearer ${token}` },
+      params: { status }, 
     });
     if (response.status === 200) {
       return response.data;
