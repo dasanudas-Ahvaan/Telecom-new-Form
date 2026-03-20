@@ -1,9 +1,22 @@
 import { useState } from "react";
-import { CheckIcon, CopyIcon, EyeIcon, EyeOffIcon, KeyIcon, RefreshIcon } from "../icons";
+import {
+  CheckIcon,
+  CopyIcon,
+  EyeIcon,
+  EyeOffIcon,
+  KeyIcon,
+  RefreshIcon,
+} from "../icons";
 import Loader from "../Loader";
 import { generateStrongPassword } from "../../utils/generatePass";
 
-export const ResetPasswordModal = ({ isOpen, onClose, admin, onReset, isLoading }) => {
+export const ResetPasswordModal = ({
+  isOpen,
+  onClose,
+  admin,
+  onReset,
+  isLoading,
+}) => {
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -21,6 +34,7 @@ export const ResetPasswordModal = ({ isOpen, onClose, admin, onReset, isLoading 
       return;
     }
     onReset(admin._id, newPassword);
+    setNewPassword("");
   };
 
   if (!isOpen) return null;

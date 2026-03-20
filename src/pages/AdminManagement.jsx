@@ -34,6 +34,7 @@ export default function AdminManagement() {
   // Form State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   // Modals
@@ -71,20 +72,27 @@ export default function AdminManagement() {
 
   const handleCreateAdmin = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError("Email and password are required");
+    if (!email || !password || !name) {
+      setError("Email, name and password are required");
       return;
     }
 
     try {
       setIsLoading(true);
       setError("");
-      const response = await createAdmin(token, user?._id, email, password);
+      const response = await createAdmin(
+        token,
+        user?._id,
+        email,
+        password,
+        name,
+      );
       if (response.success) {
         setCreatedPassword(password);
         setShowPasswordModal(true);
         setEmail("");
         setPassword("");
+        setName("");
         setSuccess("Admin created successfully!");
         fetchAdmins();
       }
@@ -133,6 +141,7 @@ export default function AdminManagement() {
       if (response.success) {
         setSuccess("Password reset successfully!");
         setResetModal({ open: false, admin: null });
+
         fetchAdmins();
       }
     } catch (err) {
@@ -187,7 +196,20 @@ export default function AdminManagement() {
 
           <form onSubmit={handleCreateAdmin} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Email */}
+              {/* Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter name"
+                  className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  required
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">
                   Email Address
@@ -294,8 +316,13 @@ export default function AdminManagement() {
                       </span>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-white text-xs sm:text-base font-normal sm:font-medium truncate sm:truncate-None">{admin.email}</p>
-                      <p className="text-gray-500 text-xs sm:text-base font-normal">Admin Account</p>
+                      <p className="text-white text-xs sm:text-base font-normal sm:font-medium truncate sm:truncate-None">
+                        {admin.email}
+                      </p>
+
+                      <p className="text-gray-500 text-xs sm:text-base font-normal">
+                        {admin.name || "name of admin (missing)"}
+                      </p>
                     </div>
                   </div>
 

@@ -3,17 +3,17 @@ import axios from "axios";
 export const BASE_URL = import.meta.env.VITE_BACKEND_API;
 
 // Create Admin
-export const createAdmin = async (token, userId, email, password) => {
+export const createAdmin = async (token, userId, email, password, name) => {
   try {
     const response = await axios.post(
       `${BASE_URL}/admin/create/${userId}`,
-      { email, password },
+      { email, password, name },
       {
         headers: {
           authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     return response.data;
   } catch (error) {
@@ -35,7 +35,7 @@ export const removeAdmin = async (token, userId, adminId) => {
         headers: {
           authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
     return response.data;
   } catch (error) {
@@ -53,7 +53,7 @@ export const resetAdminPassword = async (
   token,
   userId,
   adminId,
-  newPassword
+  newPassword,
 ) => {
   try {
     const response = await axios.put(
@@ -64,7 +64,7 @@ export const resetAdminPassword = async (
           authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     return response.data;
   } catch (error) {

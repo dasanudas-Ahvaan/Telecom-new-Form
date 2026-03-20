@@ -139,7 +139,6 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
         extraFields: member.extraFields || {},
       });
     }
-    // console.log("MEMMEM",member)
   }, [member, isOpen]);
   return (
     <div
