@@ -1,13 +1,14 @@
 function Input({
   label,
+  placeholder,
   name,
   value,
   onChange,
   type = "text",
   required,
   error,
-  labelClass="",
-  inputClass="",
+  labelClass = "",
+  inputClass = "",
 }) {
   return (
     <label className={`flex flex-col gap-1 text-gray-400 ${labelClass}`}>
@@ -16,7 +17,7 @@ function Input({
         {required && "*"}
       </span>
       <input
-        placeholder={label}
+        placeholder={placeholder || label}
         type={type}
         name={name}
         value={value}

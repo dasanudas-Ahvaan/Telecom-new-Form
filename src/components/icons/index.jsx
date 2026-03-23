@@ -385,3 +385,35 @@ export const EyeOffIcon = () => (
     <line x1="2" y1="2" x2="22" y2="22" />
   </svg>
 );
+
+export const ChevronDownIcon = () => (
+  <svg
+    className="h-4 w-4"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M19 9l-7 7-7-7"
+    />
+  </svg>
+);
+
+export const XIcon = () => (
+  <svg
+    className="h-3 w-3"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M6 18L18 6M6 6l12 12"
+    />
+  </svg>
+);

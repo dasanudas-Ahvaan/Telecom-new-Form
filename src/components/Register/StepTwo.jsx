@@ -1,7 +1,14 @@
 import React from "react";
 import ExtraFields from "../ExtraFields";
 import Input from "../Input";
-import { UserIcon, BookIcon, HomeIcon, FileIcon, CheckCircleIcon } from "../icons/index";
+import {
+  UserIcon,
+  BookIcon,
+  HomeIcon,
+  FileIcon,
+  CheckCircleIcon,
+} from "../icons/index";
+import { MultiSelect } from "../MultiSelect";
 
 export default function StepTwo({
   loading,
@@ -12,6 +19,15 @@ export default function StepTwo({
   exFields = [],
   errors = {},
 }) {
+  const handleMultiSelectChange = (selectedOptions) => {
+    const event = {
+      target: {
+        name: "volunteerPrograms",
+        value: selectedOptions,
+      },
+    };
+    handleChange(event);
+  };
   return (
     <form
       onSubmit={submitForm}
@@ -20,8 +36,18 @@ export default function StepTwo({
       {/* Global Error Message */}
       {Object.keys(errors).length > 0 && (
         <div className="bg-red-900/30 border border-red-800 text-red-400 px-4 py-3 rounded-xl flex items-center gap-2 animate-fadeIn">
-          <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-5 h-5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           <span className="font-medium">Please fix the errors below.</span>
         </div>
@@ -34,8 +60,12 @@ export default function StepTwo({
             <UserIcon />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-white">Personal Information</h2>
-            <p className="text-gray-400 text-sm mt-0.5">Enter your basic details</p>
+            <h2 className="text-xl font-semibold text-white">
+              Personal Information
+            </h2>
+            <p className="text-gray-400 text-sm mt-0.5">
+              Enter your basic details
+            </p>
           </div>
         </div>
 
@@ -48,7 +78,6 @@ export default function StepTwo({
             required
             error={errors.fullName}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
           <Input
             label="Phone"
@@ -68,7 +97,9 @@ export default function StepTwo({
               value={formData.gender}
               onChange={handleChange}
               className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all appearance-none cursor-pointer ${
-                errors.gender ? "border-red-500 bg-red-900/20" : "border-gray-700"
+                errors.gender
+                  ? "border-red-500 bg-red-900/20"
+                  : "border-gray-700"
               }`}
             >
               <option value="">Select Gender</option>
@@ -91,7 +122,6 @@ export default function StepTwo({
             required
             error={errors.dateOfBirth}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
           <Input
             label="Aadhar Number"
@@ -101,7 +131,6 @@ export default function StepTwo({
             required
             error={errors.aadhar}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
         </div>
       </section>
@@ -113,8 +142,12 @@ export default function StepTwo({
             <BookIcon />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-white">Education & Profession</h2>
-            <p className="text-gray-400 text-sm mt-0.5">Your academic and work background</p>
+            <h2 className="text-xl font-semibold text-white">
+              Education & Profession
+            </h2>
+            <p className="text-gray-400 text-sm mt-0.5">
+              Your academic and work background
+            </p>
           </div>
         </div>
 
@@ -127,7 +160,6 @@ export default function StepTwo({
             required
             error={errors.education}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
           <Input
             label="Profession"
@@ -137,7 +169,6 @@ export default function StepTwo({
             required
             error={errors.profession}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
         </div>
       </section>
@@ -150,7 +181,9 @@ export default function StepTwo({
           </div>
           <div>
             <h2 className="text-xl font-semibold text-white">Address</h2>
-            <p className="text-gray-400 text-sm mt-0.5">Your current residence</p>
+            <p className="text-gray-400 text-sm mt-0.5">
+              Your current residence
+            </p>
           </div>
         </div>
 
@@ -163,7 +196,6 @@ export default function StepTwo({
             required
             error={errors.addressLine1}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
           <Input
             label="Address Line 2"
@@ -173,7 +205,6 @@ export default function StepTwo({
             required
             error={errors.addressLine2}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
           <Input
             label="Pincode"
@@ -183,7 +214,6 @@ export default function StepTwo({
             required
             error={errors.pincode}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
           <Input
             label="City"
@@ -193,7 +223,6 @@ export default function StepTwo({
             required
             error={errors.city}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
           <Input
             label="State"
@@ -203,7 +232,6 @@ export default function StepTwo({
             required
             error={errors.state}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
           <Input
             label="Country"
@@ -213,7 +241,6 @@ export default function StepTwo({
             required
             error={errors.country}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
         </div>
       </section>
@@ -225,7 +252,9 @@ export default function StepTwo({
             <FileIcon />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-white">Additional Details</h2>
+            <h2 className="text-xl font-semibold text-white">
+              Additional Details
+            </h2>
             <p className="text-gray-400 text-sm mt-0.5">Optional information</p>
           </div>
         </div>
@@ -233,26 +262,37 @@ export default function StepTwo({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <Input
             label="Previous Associations"
+            placeholder={"Iskcon, Arya Samaj etc."}
             name="previousAssociations"
             value={formData.previousAssociations}
             onChange={handleChange}
             error={errors.previousAssociations}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
           />
-          <Input
+          {/* <Input
             label="Volunteer Programs"
             name="volunteerPrograms"
             value={formData.volunteerPrograms}
             onChange={handleChange}
             error={errors.volunteerPrograms}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-            
+          /> */}
+          <MultiSelect
+            label="Select Program/s to volunteer for/in"
+            options={[
+              { value: "Naam Astr", label: "Naam astra" },
+              { value: "Telecom", label: "Telecom" },
+              { value: "Tech", label: "Tech" },
+              { value: "Monetory", label: "Monetory" },
+            ]}
+            selected={formData.volunteerPrograms || []}
+            onChange={handleMultiSelectChange}
+            placeholder="Select Volunteer Programs"
           />
         </div>
 
         {Array.isArray(exFields) && exFields.length > 0 && (
-          <div className="mt-6 pt-6 border-t border-gray-700">
+          <div className="mt-6 pt-6 space-y-8 border-t border-gray-700">
             <ExtraFields
               exFields={exFields}
               formData={formData}
@@ -272,9 +312,24 @@ export default function StepTwo({
         >
           {loading ? (
             <>
-              <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              <svg
+                className="animate-spin w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
               <span>Submitting...</span>
             </>
@@ -287,7 +342,9 @@ export default function StepTwo({
         </button>
 
         {message && (
-          <p className="text-center text-green-400 text-sm mt-4 animate-fadeIn">{message}</p>
+          <p className="text-center text-green-400 text-sm mt-4 animate-fadeIn">
+            {message}
+          </p>
         )}
       </footer>
     </form>

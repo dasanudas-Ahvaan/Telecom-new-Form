@@ -26,7 +26,7 @@ const initialData = {
   state: "",
   country: "",
   previousAssociations: "",
-  volunteerPrograms: "",
+  volunteerPrograms: [],
   aadhar: "",
   extraFields: {},
 };
@@ -64,6 +64,11 @@ export default function MemberRegistration() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    if (name === "volunteerPrograms") {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+      return;
+    }
     if (["phone", "aadhar", "pincode"].includes(name)) {
       const numericValue = value.replace(/[^0-9]/g, "");
       if (name === "phone" && numericValue.length > 10) return;
@@ -157,9 +162,18 @@ export default function MemberRegistration() {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
+    const volunteerArray = formData.volunteerPrograms.map((v) => v.value);
+    const updatedFormData = {
+      ...formData,
+      "volunteerPrograms": volunteerArray,
+    };
 
+    // console.log("DATAAAA", updatedFormData);
+    // setLoading(!true);
+
+    // return;
     try {
-      const data = await registerMember(formData);
+      const data = await registerMember(updatedFormData);
       setMessage(data.message);
       if (data.success) {
         showModal(
@@ -191,7 +205,7 @@ export default function MemberRegistration() {
         </p>
       </header>
 
-      {step === 1 ? (
+      {step === 12 ? (
         <StepEmailVerification
           loading={loading}
           verifyLoading={verifyLoading}
