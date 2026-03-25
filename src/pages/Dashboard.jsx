@@ -25,7 +25,7 @@ const Dashboard = () => {
   });
 
   const debouncedSearch = useDebounce(search, 800).toLowerCase();
-  const { token, user } = useAuth();
+  const { user } = useAuth();
 
   const filteredMembers = debouncedSearch
     ? members.filter(
@@ -39,7 +39,7 @@ const Dashboard = () => {
     const fetchMembers = async () => {
       try {
         setIsLoading(true);
-        const response = await getAllMembers(token, user._id, filterType);
+        const response = await getAllMembers(user._id, filterType);
         if (response.success) {
           setMembers(response.data);
           setCounts((prev) => ({
@@ -48,7 +48,7 @@ const Dashboard = () => {
           }));
         }
       } catch (error) {
-        setModalError(error.message+". Please login again");
+        setModalError("Please login again");
         console.error("Error fetching members:", error.message);
       } finally {
         setIsLoading(false);
@@ -56,7 +56,7 @@ const Dashboard = () => {
     };
 
     fetchMembers();
-  }, [token, filterType]); // Re-fetch when filterType changes
+  }, [filterType]); // Re-fetch when filterType changes
 
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState({ view: false, member: null });

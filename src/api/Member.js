@@ -1,17 +1,16 @@
-import axios from "axios";
-export const BASE_URL = import.meta.env.VITE_BACKEND_API;
+import api from "./axiosConfig";
 
-export const editMember = async (token, userid, formdata) => {
+export const editMember = async (userid, formdata) => {
   try {
-    const response = await axios.put(
-      `${BASE_URL}/auth/${userid}?&id=${formdata._id}`,
+    const response = await api.put(
+      `/auth/${userid}?&id=${formdata._id}`,
       formdata,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      }
+      // {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     authorization: `Bearer ${token}`,
+      //   },
+      // },
     );
     if (response.data.success) {
       return response.data;
@@ -28,17 +27,16 @@ export const editMember = async (token, userid, formdata) => {
   }
 };
 
-export const deleteMember = async (token, userid, memberid) => {
+export const deleteMember = async (userid, memberid) => {
   try {
-    const response = await axios.delete(
-      `${BASE_URL}/auth/${userid}?&id=${memberid}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await api.delete(`/auth/${userid}?&id=${memberid}`, 
+    //   {
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     authorization: `Bearer ${token}`,
+    //   },
+    // }
+  );
     if (response.data.success) {
       return response.data;
     } else {

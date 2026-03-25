@@ -6,9 +6,9 @@ import ExtraFields from "../ExtraFields";
 import { deleteMember, editMember } from "../../api/Member";
 
 const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
-  const { token, user } = useAuth();
+  const { user } = useAuth();
 
-   const initialFormData = {
+  const initialFormData = {
     _id: "",
     email: "",
     fullName: "",
@@ -80,7 +80,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      const response = await editMember(token, user._id, formData);
+      const response = await editMember(user._id, formData);
       if (response.success) {
         onUpdate(response.data);
         setFormData(initialFormData);
@@ -102,7 +102,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      const response = await deleteMember(token, user._id, formData._id);
+      const response = await deleteMember(user._id, formData._id);
       if (response.success) {
         onDelete(formData._id);
         setFormData(initialFormData);

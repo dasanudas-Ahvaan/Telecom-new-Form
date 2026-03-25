@@ -1,28 +1,20 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
 import { useAuth } from "../authContext/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/Auth";
-
-// Simple SVG Icons to avoid extra dependencies
-const MailIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-);
-const LockIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-);
-
+import { MailIcon, SmallLockIcon } from "../components/icons";
 const Login = () => {
   const initialFormData = {
     email: "",
     password: "",
   };
-  
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialFormData);
   const [err, setErr] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { saveToken, token, saveUser } = useAuth();
+  const { login: loginFromAuthContext, user } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,10 +31,9 @@ const Login = () => {
     try {
       const response = await login(formData);
       setFormData(initialFormData);
-      
-      const { token, data } = response;
-      saveToken(token);
-      saveUser(data);
+
+      const { data } = response;
+      loginFromAuthContext(data);
       // Navigation is handled by useEffect watching token
     } catch (error) {
       setErr(error.message || "Login failed. Please try again.");
@@ -53,10 +44,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (token) {
+    if (user) {
       navigate("/dashboard");
     }
-  }, [token, navigate]);
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
@@ -81,7 +72,10 @@ const Login = () => {
 
           {/* Email Input */}
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-gray-300 ml-1">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-gray-300 ml-1"
+            >
               Email Address
             </label>
             <div className="relative group">
@@ -103,12 +97,15 @@ const Login = () => {
 
           {/* Password Input */}
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-gray-300 ml-1">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-300 ml-1"
+            >
               Password
             </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <LockIcon />
+                <SmallLockIcon />
               </div>
               <input
                 id="password"
@@ -135,9 +132,10 @@ const Login = () => {
             type="submit"
             disabled={isLoading}
             className={`w-full py-3.5 rounded-xl font-semibold text-white shadow-lg transition-all duration-200 
-              ${isLoading 
-                ? "bg-gray-700 cursor-not-allowed" 
-                : "bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 hover:shadow-red-500/25 active:scale-[0.98]"
+              ${
+                isLoading
+                  ? "bg-gray-700 cursor-not-allowed"
+                  : "bg-linear-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 hover:shadow-red-500/25 active:scale-[0.98]"
               }`}
           >
             {isLoading ? (
@@ -151,7 +149,9 @@ const Login = () => {
           </button>
 
           {/* Error Message */}
-          <div className={`min-h-6 flex items-center justify-center transition-all duration-300 ${err ? "opacity-100" : "opacity-0"}`}>
+          <div
+            className={`min-h-6 flex items-center justify-center transition-all duration-300 ${err ? "opacity-100" : "opacity-0"}`}
+          >
             {err && (
               <p className="text-red-400 text-sm font-medium bg-red-900/20 px-3 py-1 rounded-md border border-red-900/50">
                 {err}
@@ -170,7 +170,7 @@ const Login = () => {
           </div> */}
         </form>
       </div>
-      
+
       {/* Custom Animation Styles for the blobs */}
       <style>{`
         @keyframes blob {

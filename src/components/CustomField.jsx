@@ -9,7 +9,7 @@ import Loader from "./Loader";
 import { FieldIcon, PlusIcon, TrashIcon } from "./icons";
 
 export default function CustomFields() {
-  const { token, user } = useAuth();
+  const { user } = useAuth();
 
   const [fields, setFields] = useState([]);
   const [form, setForm] = useState({
@@ -67,7 +67,7 @@ export default function CustomFields() {
           .filter((o) => o);
       }
 
-      await createCustomField(payload, user?._id, token);
+      await createCustomField(payload, user?._id);
       setSuccess("Field created successfully!");
       setForm({ label: "", type: "text", required: false, options: "" });
       fetchFields();
@@ -86,7 +86,7 @@ export default function CustomFields() {
       setError("");
       setSuccess("");
 
-      await deleteCustomField(id, user?._id, token);
+      await deleteCustomField(id, user?._id);
       setSuccess("Field deleted successfully!");
       fetchFields();
     } catch (err) {

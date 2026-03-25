@@ -8,7 +8,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout, token, user } = useAuth();
+  const { logout, user } = useAuth();
   // Close mobile menu on Escape key
   useEffect(() => {
     const handleEsc = (e) => e.key === "Escape" && setOpen(false);
@@ -26,8 +26,8 @@ export default function Navbar() {
   };
 
   const filteredRoutes = routes.filter((f) => {
-    if (token && f.name === "Login") return false;
-    if (!token && f.name === "Logout") return false;
+    if (user && f.name === "Login") return false;
+    if (!user && f.name === "Logout") return false;
 
     if (f.role === "super_user" && user?.role !== "super_user") return false;
 

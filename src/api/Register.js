@@ -1,9 +1,8 @@
-import axios from "axios";
-export const BASE_URL = import.meta.env.VITE_BACKEND_API;
+import api from "./axiosConfig";
 
 export const sendOtp = async (formdata) => {
   try {
-    const response = await axios.post(`${BASE_URL}/form/otp`, formdata, {
+    const response = await api.post(`/form/otp`, formdata, {
       headers: { "Content-Type": "application/json" },
     });
     if (response.status === 200) {
@@ -23,7 +22,7 @@ export const sendOtp = async (formdata) => {
 
 export const verifyOtp = async (formdata) => {
   try {
-    const response = await axios.post(`${BASE_URL}/form/votp`, formdata, {
+    const response = await api.post(`/form/votp`, formdata, {
       headers: { "Content-Type": "application/json" },
     });
     if (response.status === 200) {
@@ -43,7 +42,7 @@ export const verifyOtp = async (formdata) => {
 
 export const registerMember = async (formdata) => {
   try {
-    const response = await axios.post(`${BASE_URL}/form/members`, formdata, {
+    const response = await api.post(`/form/members`, formdata, {
       headers: { "Content-Type": "application/json" },
     });
     if (response.data.success) {

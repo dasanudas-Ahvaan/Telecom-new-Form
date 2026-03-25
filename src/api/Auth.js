@@ -1,9 +1,9 @@
-import axios from "axios";
+import api from "./axiosConfig";
 export const BASE_URL = import.meta.env.VITE_BACKEND_API;
 
 export const login = async (formdata) => {
   try {
-    const response = await axios.post(`${BASE_URL}/auth/login`, formdata, {
+    const response = await api.post(`/auth/login`, formdata, {
       headers: { "Content-Type": "application/json" },
     });
     if (response.status === 200) {
@@ -20,3 +20,4 @@ export const login = async (formdata) => {
     throw new Error(message);
   }
 };
+

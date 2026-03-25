@@ -1,19 +1,17 @@
-// src/api/Admin.js
-import axios from "axios";
-export const BASE_URL = import.meta.env.VITE_BACKEND_API;
+import api from "./axiosConfig";
 
 // Create Admin
-export const createAdmin = async (token, userId, email, password, name) => {
+export const createAdmin = async (userId, email, password, name) => {
   try {
-    const response = await axios.post(
-      `${BASE_URL}/admin/create/${userId}`,
+    const response = await api.post(
+      `/admin/create/${userId}`,
       { email, password, name },
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      },
+      // {
+      //   headers: {
+      //     authorization: `Bearer ${token}`,
+      //     "Content-Type": "application/json",
+      //   },
+      // },
     );
     return response.data;
   } catch (error) {
@@ -27,15 +25,15 @@ export const createAdmin = async (token, userId, email, password, name) => {
 };
 
 // Remove Admin
-export const removeAdmin = async (token, userId, adminId) => {
+export const removeAdmin = async (userId, adminId) => {
   try {
-    const response = await axios.delete(
-      `${BASE_URL}/admin/remove/${userId}/${adminId}`,
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      },
+    const response = await api.delete(
+      `/admin/remove/${userId}/${adminId}`,
+      //    {
+      //   headers: {
+      //     authorization: `Bearer ${token}`,
+      //   },
+      // }
     );
     return response.data;
   } catch (error) {
@@ -49,22 +47,17 @@ export const removeAdmin = async (token, userId, adminId) => {
 };
 
 // Reset Admin Password
-export const resetAdminPassword = async (
-  token,
-  userId,
-  adminId,
-  newPassword,
-) => {
+export const resetAdminPassword = async (userId, adminId, newPassword) => {
   try {
-    const response = await axios.put(
-      `${BASE_URL}/admin/reset-password/${userId}`,
+    const response = await api.put(
+      `/admin/reset-password/${userId}`,
       { adminId, newPassword },
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      },
+      // {
+      //   headers: {
+      //     authorization: `Bearer ${token}`,
+      //     "Content-Type": "application/json",
+      //   },
+      // },
     );
     return response.data;
   } catch (error) {
@@ -78,13 +71,16 @@ export const resetAdminPassword = async (
 };
 
 // Get All Admins
-export const getAllAdmins = async (token, userId) => {
+export const getAllAdmins = async (userId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/admin/list/${userId}`, {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.get(
+      `/admin/list/${userId}`,
+      //    {
+      //   headers: {
+      //     authorization: `Bearer ${token}`,
+      //   },
+      // }
+    );
     return response.data;
   } catch (error) {
     const message =

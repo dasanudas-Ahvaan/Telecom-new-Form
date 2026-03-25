@@ -25,7 +25,7 @@ import { ResetPasswordModal } from "../components/Modals/ResetPasswordModal";
 import Modal from "../components/Modal";
 
 export default function AdminManagement() {
-  const { token, user } = useAuth();
+  const { user } = useAuth();
   const [admins, setAdmins] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -59,7 +59,7 @@ export default function AdminManagement() {
   const fetchAdmins = async () => {
     try {
       setIsLoading(true);
-      const response = await getAllAdmins(token, user?._id);
+      const response = await getAllAdmins(user?._id);
       if (response.success) {
         setAdmins(response.data || []);
       }
@@ -80,13 +80,7 @@ export default function AdminManagement() {
     try {
       setIsLoading(true);
       setError("");
-      const response = await createAdmin(
-        token,
-        user?._id,
-        email,
-        password,
-        name,
-      );
+      const response = await createAdmin(user?._id, email, password, name);
       if (response.success) {
         setCreatedPassword(password);
         setShowPasswordModal(true);
@@ -114,7 +108,7 @@ export default function AdminManagement() {
     try {
       setIsLoading(true);
       setError("");
-      const response = await removeAdmin(token, user?._id, adminId);
+      const response = await removeAdmin(user?._id, adminId);
       if (response.success) {
         setSuccess("Admin removed successfully!");
         fetchAdmins();
@@ -133,7 +127,6 @@ export default function AdminManagement() {
       setIsLoading(true);
       setError("");
       const response = await resetAdminPassword(
-        token,
         user?._id,
         adminId,
         newPassword,

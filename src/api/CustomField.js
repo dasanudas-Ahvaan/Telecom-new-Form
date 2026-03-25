@@ -1,9 +1,8 @@
-import axios from "axios";
-export const BASE_URL = import.meta.env.VITE_BACKEND_API;
+import api from "./axiosConfig";
 
 export const getCustomFields = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/custom-field/`);
+    const response = await api.get(`/custom-field/`);
     if (response.status === 200) {
       return response.data;
     } else {
@@ -19,17 +18,17 @@ export const getCustomFields = async () => {
   }
 };
 
-export const createCustomField = async (formdata, userId, token) => {
+export const createCustomField = async (formdata, userId) => {
   try {
-    const response = await axios.post(
-      `${BASE_URL}/custom-field/${userId}`,
+    const response = await api.post(
+      `/custom-field/${userId}`,
       formdata,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      }
+      // {
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     authorization: `Bearer ${token}`,
+      //   },
+      // }
     );
     if (response.status === 201) {
       return response.data;
@@ -46,15 +45,15 @@ export const createCustomField = async (formdata, userId, token) => {
   }
 };
 
-export const deleteCustomField = async (id, userId, token) => {
+export const deleteCustomField = async (id, userId) => {
   try {
-    const response = await axios.delete(
-      `${BASE_URL}/custom-field/${userId}?&fieldId=${id}`,
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      }
+    const response = await api.delete(
+      `/custom-field/${userId}?&fieldId=${id}`,
+      // {
+      //   headers: {
+      //     authorization: `Bearer ${token}`,
+      //   },
+      // },
     );
     if (response.status === 200) {
       return response.data;
