@@ -9,6 +9,8 @@ import {
 import { getCustomFields } from "../api/CustomField";
 import { validateStepTwo } from "../utils/validateStepTwo";
 import Modal from "../components/Modal";
+import { options, serviceChoices } from "../data/flow";
+import MultiStepServiceFlow from "../components/MultiStepServiceFlow/Flow2";
 
 const initialData = {
   email: "",
@@ -33,7 +35,7 @@ const initialData = {
 
 export default function MemberRegistration() {
   const [formData, setFormData] = useState(initialData);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(3);
   const [loading, setLoading] = useState(false);
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -165,7 +167,7 @@ export default function MemberRegistration() {
     const volunteerArray = formData.volunteerPrograms.map((v) => v.value);
     const updatedFormData = {
       ...formData,
-      "volunteerPrograms": volunteerArray,
+      volunteerPrograms: volunteerArray,
     };
 
     // console.log("DATAAAA", updatedFormData);
@@ -222,7 +224,7 @@ export default function MemberRegistration() {
           }
           cooldown={cooldown}
         />
-      ) : (
+      ) : step === 2 ? (
         <StepTwo
           loading={loading}
           handleChange={handleChange}
@@ -231,6 +233,11 @@ export default function MemberRegistration() {
           message={message}
           exFields={exFields}
           errors={errors}
+        />
+      ) : (
+        <MultiStepServiceFlow
+          choices={serviceChoices}
+          onSubmit={(data) => console.log("Form Submitted:", data)}
         />
       )}
       <Modal

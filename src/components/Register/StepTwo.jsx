@@ -291,7 +291,7 @@ export default function StepTwo({
           />
         </div>
 
-        {Array.isArray(exFields) && exFields.length > 0 && (
+        {/* {Array.isArray(exFields) && exFields.length > 0 && (
           <div className="mt-6 pt-6 space-y-8 border-t border-gray-700">
             <ExtraFields
               exFields={exFields}
@@ -300,9 +300,10 @@ export default function StepTwo({
               errors={errors}
             />
           </div>
-        )}
+        )} */}
       </section>
 
+     
       {/* Submit Button */}
       <footer className="pt-6 border-t border-gray-700">
         <button
