@@ -16,6 +16,7 @@ export default function StepTwo({
   handleChange,
   submitForm,
   message,
+  onContinue = { goToVolunteerStep },
   exFields = [],
   errors = {},
 }) {
@@ -28,9 +29,10 @@ export default function StepTwo({
     };
     handleChange(event);
   };
+ 
   return (
     <form
-      onSubmit={submitForm}
+      onSubmit={onContinue}
       className="space-y-8 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 shadow-xl text-left"
     >
       {/* Global Error Message */}
@@ -246,7 +248,7 @@ export default function StepTwo({
       </section>
 
       {/* Additional Details */}
-      <section>
+      {/* <section>
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-700">
           <div className="p-2.5 bg-linear-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg shadow-purple-900/20">
             <FileIcon />
@@ -269,14 +271,14 @@ export default function StepTwo({
             error={errors.previousAssociations}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
           />
-          {/* <Input
+          <Input
             label="Volunteer Programs"
             name="volunteerPrograms"
             value={formData.volunteerPrograms}
             onChange={handleChange}
             error={errors.volunteerPrograms}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
-          /> */}
+          />
           <MultiSelect
             label="Select Program/s to volunteer for/in"
             options={[
@@ -291,7 +293,7 @@ export default function StepTwo({
           />
         </div>
 
-        {/* {Array.isArray(exFields) && exFields.length > 0 && (
+        {Array.isArray(exFields) && exFields.length > 0 && (
           <div className="mt-6 pt-6 space-y-8 border-t border-gray-700">
             <ExtraFields
               exFields={exFields}
@@ -300,10 +302,9 @@ export default function StepTwo({
               errors={errors}
             />
           </div>
-        )} */}
-      </section>
+        )}
+      </section> */}
 
-     
       {/* Submit Button */}
       <footer className="pt-6 border-t border-gray-700">
         <button
@@ -332,12 +333,12 @@ export default function StepTwo({
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              <span>Submitting...</span>
+              <span>Please wait...</span>
             </>
           ) : (
             <>
               <CheckCircleIcon />
-              <span>Submit Registration</span>
+              <span>Continue to Volunteer Programs</span>
             </>
           )}
         </button>

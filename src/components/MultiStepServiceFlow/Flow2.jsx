@@ -72,15 +72,17 @@ export default function MultiStepServiceFlow({ choices, onSubmit }) {
               onToggle={handleToggleChoice}
             />
           ) : (
-            <StepTwoDetails
-              selectedChoices={choices.filter((c) =>
-                selectedIds.includes(c.id),
-              )}
-              answers={answers}
-              agreements={agreements}
-              onAnswerChange={handleAnswerChange}
-              onAgreementChange={handleAgreementChange}
-            />
+            <>
+              <StepTwoDetails
+                selectedChoices={choices.filter((c) =>
+                  selectedIds.includes(c._id),
+                )}
+                answers={answers}
+                agreements={agreements}
+                onAnswerChange={handleAnswerChange}
+                onAgreementChange={handleAgreementChange}
+              />
+            </>
           )}
         </main>
 

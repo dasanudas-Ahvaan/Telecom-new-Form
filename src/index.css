@@ -208,3 +208,24 @@ input:-webkit-autofill {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
 }
+
+/* The Parent Container */
+.roman-list-container {
+  counter-reset: roman-list;
+}
+
+/* The Child Item Rows */
+.roman-list-item {
+  display: flex;
+  gap: 12px;
+  counter-increment: roman-list;
+}
+
+/* The Automatically Injected Numerals */
+.roman-list-item::before {
+  content: counter(roman-list, upper-roman) ".";
+  font-family: monospace;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: right;
+}

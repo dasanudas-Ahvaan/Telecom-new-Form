@@ -1,13 +1,13 @@
-export function QuestionInput({ question, value, onChange }) {
+export function QuestionInput({ question, value, questionNumber, onChange }) {
   const baseClasses =
     "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 border outline-none";
 
   return (
     <div>
       <label htmlFor={question.id} className="block text-sm font-medium  mb-1">
-        {question.label}
+        {questionNumber}. {question.label}
       </label>
-      {question.type === "textarea" ? (
+      {question.type === "textarea" && (
         <textarea
           id={question.id}
           required
@@ -16,7 +16,8 @@ export function QuestionInput({ question, value, onChange }) {
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
-      ) : (
+      )}
+      {question.type === "text" && (
         <input
           id={question.id}
           type="text"
@@ -25,6 +26,23 @@ export function QuestionInput({ question, value, onChange }) {
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
+      )}
+      {question.type === "options" && (
+        <select
+          id={question.id}
+          required
+          className={`bg-black text-white p-1 rounded`}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="">Select an option</option>
+
+          {question.options.map((op, index) => (
+            <option key={index} value={op}>
+              {op}
+            </option>
+          ))}
+        </select>
       )}
     </div>
   );

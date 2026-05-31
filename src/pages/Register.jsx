@@ -9,8 +9,9 @@ import {
 import { getCustomFields } from "../api/CustomField";
 import { validateStepTwo } from "../utils/validateStepTwo";
 import Modal from "../components/Modal";
-import { options, serviceChoices } from "../data/flow";
+import { serviceChoices } from "../data/flow";
 import MultiStepServiceFlow from "../components/MultiStepServiceFlow/Flow2";
+import { getVolunteerPrograms } from "../api/VolunteerPrograms";
 
 const initialData = {
   email: "",
@@ -35,10 +36,11 @@ const initialData = {
 
 export default function MemberRegistration() {
   const [formData, setFormData] = useState(initialData);
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [volunteerPrograms, setVolunteerPrograms] = useState("");
 
   const [cooldown, setCooldown] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -56,11 +58,18 @@ export default function MemberRegistration() {
   };
   useEffect(() => {
     fetchFields();
+    fetchVolunteerPrograms();
   }, []);
 
   const fetchFields = async () => {
     const response = await getCustomFields();
     if (Array.isArray(response?.data)) setExFields(response?.data);
+  };
+
+  const fetchVolunteerPrograms = async () => {
+    const response = await getVolunteerPrograms();
+    console.log(response.data);
+    setVolunteerPrograms(response?.data);
   };
 
   const handleChange = (e) => {
@@ -152,50 +161,114 @@ export default function MemberRegistration() {
     }
   };
 
-  const submitForm = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-    setErrors({});
-    const validationErrors = validateStepTwo(formData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      setLoading(false);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-    const volunteerArray = formData.volunteerPrograms.map((v) => v.value);
+  // const submitForm = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setMessage("");
+  //   setErrors({});
+  //   const validationErrors = validateStepTwo(formData);
+  //   if (Object.keys(validationErrors).length > 0) {
+  //     setErrors(validationErrors);
+  //     setLoading(false);
+  //     window.scrollTo({ top: 0, behavior: "smooth" });
+  //     return;
+  //   }
+  //   const volunteerArray = formData.volunteerPrograms.map((v) => v.value);
+  //   const updatedFormData = {
+  //     ...formData,
+  //     volunteerPrograms: volunteerArray,
+  //   };
+
+  //   // console.log("DATAAAA", updatedFormData);
+  //   // setLoading(!true);
+
+  //   // return;
+  //   try {
+  //     const data = await registerMember(updatedFormData);
+  //     setMessage(data.message);
+  //     if (data.success) {
+  //       showModal(
+  //         "success",
+  //         "Registration Successful!",
+  //         "Your member registration has been completed successfully. We will contact you soon.",
+  //       );
+  //       setFormData(initialData);
+  //       setStep(1);
+  //     }
+  //   } catch (err) {
+  //     showModal(
+  //       "error",
+  //       "Registration Failed",
+  //       err.message || "An unexpected error occurred. Please try again.",
+  //     );
+  //     setMessage(err.message || "Submission failed.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleVolunteerProgramSubmit = async (data) => {
+    const volunteerProgramsData = data.selectedIds.map((programId) => {
+      const program = volunteerPrograms.find((p) => p._id === programId);
+
+      return {
+        programId,
+        agreed: data.agreements[programId],
+
+        answers: Object.fromEntries(
+          Object.entries(data.answers).filter(([key]) =>
+            key.startsWith(`${programId}_`),
+          ),
+        ),
+
+        title: program?.title,
+      };
+    });
+
     const updatedFormData = {
       ...formData,
-      volunteerPrograms: volunteerArray,
+      volunteerPrograms: volunteerProgramsData,
     };
-
-    // console.log("DATAAAA", updatedFormData);
-    // setLoading(!true);
-
+    // console.log("before register", updatedFormData);
     // return;
     try {
-      const data = await registerMember(updatedFormData);
-      setMessage(data.message);
-      if (data.success) {
+      setLoading(true);
+
+      const response = await registerMember(updatedFormData);
+
+      if (response.success) {
         showModal(
           "success",
           "Registration Successful!",
           "Your member registration has been completed successfully. We will contact you soon.",
         );
+
         setFormData(initialData);
+
         setStep(1);
       }
     } catch (err) {
-      showModal(
-        "error",
-        "Registration Failed",
-        err.message || "An unexpected error occurred. Please try again.",
-      );
-      setMessage(err.message || "Submission failed.");
+      showModal("error", "Registration Failed", err.message);
     } finally {
       setLoading(false);
     }
+  };
+  const continueToVolunteerStep = (e) => {
+    e.preventDefault();
+
+    const validationErrors = validateStepTwo(formData);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      return;
+    }
+
+    setErrors({});
+    setStep(3);
   };
 
   return (
@@ -228,16 +301,17 @@ export default function MemberRegistration() {
         <StepTwo
           loading={loading}
           handleChange={handleChange}
+          onContinue={continueToVolunteerStep}
           formData={formData}
-          submitForm={submitForm}
+          // submitForm={submitForm}
           message={message}
           exFields={exFields}
           errors={errors}
         />
       ) : (
         <MultiStepServiceFlow
-          choices={serviceChoices}
-          onSubmit={(data) => console.log("Form Submitted:", data)}
+          choices={volunteerPrograms}
+          onSubmit={handleVolunteerProgramSubmit}
         />
       )}
       <Modal
