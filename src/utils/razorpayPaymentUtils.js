@@ -21,7 +21,6 @@ export const initiatePayment = async (amount, prefillData) => {
     amount: amount,
     receipt: `${Date.now()}_${email}`,
   };
-  console.log("fda", formData, RP_KEY);
 
   const res = await api.post("/pay/", formData, {
     headers: { "Content-Type": "application/json" },

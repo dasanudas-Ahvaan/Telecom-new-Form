@@ -98,7 +98,7 @@ export default function MultiStepServiceFlow({ choices, onSubmit }) {
             </button>
           ) : (
             <div />
-          )}{" "}
+          )}
           {/* Empty div for flexbox spacing if no back button */}
           <button
             type="submit"

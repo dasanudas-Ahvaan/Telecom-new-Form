@@ -43,6 +43,7 @@ export default function MemberRegistration() {
   const [verifyLoading, setVerifyLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [volunteerPrograms, setVolunteerPrograms] = useState("");
+  const [contributionAmount, setContributionAmount] = useState("");
 
   const [cooldown, setCooldown] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -164,25 +165,6 @@ export default function MemberRegistration() {
     }
   };
 
-  // const handleVolunteerProgramSubmit = (data) => {
-  //   const volunteerProgramsData = data.selectedIds.map((programId) => {
-  //     const program = volunteerPrograms.find((p) => p._id === programId);
-  //     return {
-  //       programId,
-  //       agreed: data.agreements[programId],
-  //       answers: Object.fromEntries(
-  //         Object.entries(data.answers).filter(([key]) =>
-  //           key.startsWith(`${programId}_`),
-  //         ),
-  //       ),
-  //       title: program?.title,
-  //     };
-  //   });
-
-  //   setVolunteerData(volunteerProgramsData);
-  //   setStep(4); // Move to Review & Pay
-  // };
-
   const handleVolunteerProgramSubmit = async (data) => {
     const volunteerProgramsData = data.selectedIds.map((programId) => {
       const program = volunteerPrograms.find((p) => p._id === programId);
@@ -252,7 +234,12 @@ export default function MemberRegistration() {
   const handlePayAndRegister = async () => {
     setLoading(true);
     try {
-      const paymentResponse = await initiatePayment(100, {
+      const paymentAmount = Number(contributionAmount);
+      if (paymentAmount < 1) {
+        alert("please select a valid amount");
+        return;
+      }
+      const paymentResponse = await initiatePayment(paymentAmount, {
         name: formData.fullName,
         email: formData.email,
         contact: formData.phone,
@@ -300,53 +287,6 @@ export default function MemberRegistration() {
       setLoading(false);
     }
   };
-
-  // const handleVolunteerProgramSubmit = async (data) => {
-  //   const volunteerProgramsData = data.selectedIds.map((programId) => {
-  //     const program = volunteerPrograms.find((p) => p._id === programId);
-
-  //     return {
-  //       programId,
-  //       agreed: data.agreements[programId],
-
-  //       answers: Object.fromEntries(
-  //         Object.entries(data.answers).filter(([key]) =>
-  //           key.startsWith(`${programId}_`),
-  //         ),
-  //       ),
-
-  //       title: program?.title,
-  //     };
-  //   });
-
-  //   const updatedFormData = {
-  //     ...formData,
-  //     volunteerPrograms: volunteerProgramsData,
-  //   };
-  //   console.log("before register", updatedFormData);
-  //   return;
-  //   try {
-  //     setLoading(true);
-
-  //     const response = await registerMember(updatedFormData);
-
-  //     if (response.success) {
-  //       showModal(
-  //         "success",
-  //         "Registration Successful!",
-  //         "Your member registration has been completed successfully. We will contact you soon.",
-  //       );
-
-  //       setFormData(initialData);
-
-  //       setStep(1);
-  //     }
-  //   } catch (err) {
-  //     showModal("error", "Registration Failed", err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const continueToVolunteerStep = (e) => {
     e.preventDefault();
@@ -412,12 +352,14 @@ export default function MemberRegistration() {
         />
       )}
       {step === 4 && (
-        <ReviewAndPay
-          formData={formData}
-          volunteerData={volunteerData}
-          onPay={handlePayAndRegister}
-          loading={loading}
-        />
+          <ReviewAndPay
+            formData={formData}
+            volunteerData={volunteerData}
+            onPay={handlePayAndRegister}
+            loading={loading}
+            contributionAmount={contributionAmount}
+            setContributionAmount={setContributionAmount}
+          />
       )}
       <Modal
         isOpen={modalConfig.isOpen}
