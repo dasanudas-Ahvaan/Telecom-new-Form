@@ -38,7 +38,7 @@ export const initiatePayment = async (amount, prefillData) => {
       currency: order.currency,
       name: "Your Organization",
       description: "Membership Registration",
-      order_id: order.id,
+      order_id: order.razorpayOrderId,
       handler: (response) => resolve({ ...response, formData: prefillData }),
       theme: { color: "#ea580c" },
       modal: { ondismiss: () => resolve(null) },
