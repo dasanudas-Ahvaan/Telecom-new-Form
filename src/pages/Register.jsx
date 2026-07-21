@@ -9,7 +9,6 @@ import {
 import { getCustomFields } from "../api/CustomField";
 import { validateStepTwo } from "../utils/validateStepTwo";
 import Modal from "../components/Modal";
-import { serviceChoices } from "../data/flow";
 import MultiStepServiceFlow from "../components/MultiStepServiceFlow/Flow2";
 import { getVolunteerPrograms } from "../api/VolunteerPrograms";
 import ReviewAndPay from "../components/Register/ReviewAndPay";
@@ -168,18 +167,28 @@ export default function MemberRegistration() {
   const handleVolunteerProgramSubmit = async (data) => {
     const volunteerProgramsData = data.selectedIds.map((programId) => {
       const program = volunteerPrograms.find((p) => p._id === programId);
+
+      const answers = Object.fromEntries(
+        Object.entries(data.answers)
+          .filter(([key]) => key.startsWith(`${programId}_`))
+          .map(([key, value]) => {
+            // Remove "<programId>_"
+            const field = key.slice(programId.length + 1);
+
+            // Remove trailing "_0", "_1", etc.
+            const cleanField = field.replace(/_\d+$/, "");
+
+            return [cleanField, value];
+          }),
+      );
+
       return {
         programId,
-        agreed: data.agreements[programId],
-        answers: Object.fromEntries(
-          Object.entries(data.answers).filter(([key]) =>
-            key.startsWith(`${programId}_`),
-          ),
-        ),
         title: program?.title,
+        agreed: data.agreements[programId],
+        answers,
       };
     });
-
     setVolunteerData(volunteerProgramsData);
 
     // Check if the user opted for financial assistance / monetary choice
@@ -203,7 +212,6 @@ export default function MemberRegistration() {
         const updatedFormData = {
           ...formData,
           volunteerPrograms: volunteerProgramsData,
-          razorpay_payment_id: "", // Empty since no payment was made
         };
 
         const response = await registerMember(updatedFormData);
@@ -244,7 +252,6 @@ export default function MemberRegistration() {
         email: formData.email,
         contact: formData.phone,
       });
-      console.log("respo from payment", paymentResponse);
 
       if (!paymentResponse) {
         showModal(
@@ -255,11 +262,24 @@ export default function MemberRegistration() {
         setLoading(false);
         return;
       }
+      const {
+        razorpay_order_id: razorpayOrderId,
+        razorpay_payment_id: razorpayPaymentId,
+        razorpaySubscriptionId,
+      } = paymentResponse;
+      const donationType = volunteerData.find(
+        (p) => p.programId === "financial-assistance",
+      )?.answers["finance-frequency"].toLowerCase();
 
       const updatedFormData = {
         ...formData,
         volunteerPrograms: volunteerData,
-        razorpay_payment_id: paymentResponse?.razorpay_payment_id || "",
+        paymentType: {
+          razorpayPaymentId,
+          razorpayOrderId,
+          razorpaySubscriptionId,
+          donationType,
+        },
       };
       // Send to backend
       const response = await registerMember(updatedFormData);
@@ -352,14 +372,14 @@ export default function MemberRegistration() {
         />
       )}
       {step === 4 && (
-          <ReviewAndPay
-            formData={formData}
-            volunteerData={volunteerData}
-            onPay={handlePayAndRegister}
-            loading={loading}
-            contributionAmount={contributionAmount}
-            setContributionAmount={setContributionAmount}
-          />
+        <ReviewAndPay
+          formData={formData}
+          volunteerData={volunteerData}
+          onPay={handlePayAndRegister}
+          loading={loading}
+          contributionAmount={contributionAmount}
+          setContributionAmount={setContributionAmount}
+        />
       )}
       <Modal
         isOpen={modalConfig.isOpen}

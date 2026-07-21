@@ -46,7 +46,7 @@ export const serviceChoices = [
         id: "finance-frequency", // Unique ID
         label: "Is this a one time assistance or recurring assistance?",
         type: "options",
-        options: ["One Time", "Recurring"],
+        options: ["once", "recurring"],
       },
     ],
   },
