@@ -66,9 +66,8 @@ export const initiateSubscription = async (planId, prefillData) => {
       headers: { "Content-Type": "application/json" },
     },
   );
-  console.log("response from subcr", res);
 
-  const { subscriptionId } = res.data;
+  const { subscriptionId } = res.data.data;
 
   return new Promise((resolve) => {
     const options = {
@@ -90,6 +89,7 @@ export const initiateSubscription = async (planId, prefillData) => {
       },
 
       handler: (response) => {
+        console.log("from handler", response);
         resolve({
           ...response,
           formData: prefillData,
