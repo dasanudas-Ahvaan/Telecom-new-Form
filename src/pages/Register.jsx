@@ -12,7 +12,12 @@ import Modal from "../components/Modal";
 import MultiStepServiceFlow from "../components/MultiStepServiceFlow/Flow2";
 import { getVolunteerPrograms } from "../api/VolunteerPrograms";
 import ReviewAndPay from "../components/Register/ReviewAndPay";
-import { initiatePayment } from "../utils/razorpayPaymentUtils";
+import {
+  initiatePayment,
+  initiateSubscription,
+} from "../utils/razorpayPaymentUtils";
+import SubscribeAndPay from "../components/Register/SubscribeAndPay";
+import { getSubscriptionPlans } from "../api/SubscriptionPlans";
 
 const initialData = {
   email: "",
@@ -43,6 +48,8 @@ export default function MemberRegistration() {
   const [message, setMessage] = useState("");
   const [volunteerPrograms, setVolunteerPrograms] = useState("");
   const [contributionAmount, setContributionAmount] = useState("");
+  const [subscriptionPlans, setSubscriptionPlans] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState("");
 
   const [cooldown, setCooldown] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -62,6 +69,7 @@ export default function MemberRegistration() {
   useEffect(() => {
     fetchFields();
     fetchVolunteerPrograms();
+    fetchSubscriptionPlans();
   }, []);
 
   const fetchFields = async () => {
@@ -71,8 +79,11 @@ export default function MemberRegistration() {
 
   const fetchVolunteerPrograms = async () => {
     const response = await getVolunteerPrograms();
-    console.log(response.data);
     setVolunteerPrograms(response?.data);
+  };
+  const fetchSubscriptionPlans = async () => {
+    const response = await getSubscriptionPlans();
+    setSubscriptionPlans(response?.data.sort((a, b) => a.amount - b.amount));
   };
 
   const handleChange = (e) => {
@@ -202,9 +213,23 @@ export default function MemberRegistration() {
         title.includes("donation")
       );
     });
+    console.log(
+      "this is volunteer data before step",
+      volunteerData,
+      volunteerProgramsData,
+    );
 
-    if (requiresPayment) {
-      setStep(4); // Move to Review & Pay
+    const financialProgram = volunteerProgramsData.find(
+      (p) => p.programId === "financial-assistance",
+    );
+
+    const frequency =
+      financialProgram?.answers["finance-frequency"]?.toLowerCase();
+
+    if (frequency === "once") {
+      setStep(4); // Review & Pay
+    } else if (frequency === "recurring") {
+      setStep(5); // Subscribe & Pay
     } else {
       // Register directly without payment
       setLoading(true);
@@ -247,6 +272,9 @@ export default function MemberRegistration() {
         alert("please select a valid amount");
         return;
       }
+      console.log("this is volunteer data", volunteerData);
+      return;
+
       const paymentResponse = await initiatePayment(paymentAmount, {
         name: formData.fullName,
         email: formData.email,
@@ -267,9 +295,78 @@ export default function MemberRegistration() {
         razorpay_payment_id: razorpayPaymentId,
         razorpaySubscriptionId,
       } = paymentResponse;
-      const donationType = volunteerData.find(
-        (p) => p.programId === "financial-assistance",
-      )?.answers["finance-frequency"].toLowerCase();
+      const donationType = volunteerData
+        .find((p) => p.programId === "financial-assistance")
+        ?.answers["finance-frequency"].toLowerCase();
+
+      const updatedFormData = {
+        ...formData,
+        volunteerPrograms: volunteerData,
+        paymentType: {
+          razorpayPaymentId,
+          razorpayOrderId,
+          razorpaySubscriptionId,
+          donationType,
+        },
+      };
+      // Send to backend
+      const response = await registerMember(updatedFormData);
+      if (response.success) {
+        showModal(
+          "success",
+          "Registration Successful!",
+          "Your member registration has been completed successfully. We will contact you soon.",
+        );
+
+        setFormData(initialData);
+
+        setStep(1);
+      } else {
+        showModal("error", "Registration Failed", response.message);
+      }
+    } catch (err) {
+      console.error("haha", err);
+      showModal(
+        "error",
+        "Payment Failed",
+        err.message || "Something went wrong.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubscribeAndRegister = async () => {
+    setLoading(true);
+    try {
+      const {id:planId,amount} = selectedPlan
+      if (!selectedPlan.id) {
+        alert("please select a valid monthly donation plan");
+        return;
+      }
+      const paymentResponse = await initiateSubscription(planId, {
+        name: formData.fullName,
+        email: formData.email,
+        contact: formData.phone,
+      });
+
+      if (!paymentResponse) {
+        showModal(
+          "error",
+          "Payment Cancelled",
+          "You closed the payment window.",
+        );
+        setLoading(false);
+        return;
+      }
+      const {
+        razorpay_order_id: razorpayOrderId,
+        razorpay_payment_id: razorpayPaymentId,
+        razorpaySubscriptionId,
+      } = paymentResponse;
+      const donationType = volunteerData
+        .find((p) => p.programId === "financial-assistance")
+        ?.answers["finance-frequency"].toLowerCase();
 
       const updatedFormData = {
         ...formData,
@@ -379,6 +476,17 @@ export default function MemberRegistration() {
           loading={loading}
           contributionAmount={contributionAmount}
           setContributionAmount={setContributionAmount}
+        />
+      )}
+      {step === 5 && (
+        <SubscribeAndPay
+          formData={formData}
+          volunteerData={volunteerData}
+          plans={subscriptionPlans}
+          selectedPlan={selectedPlan}
+          setSelectedPlan={setSelectedPlan}
+          onSubscribe={handleSubscribeAndRegister}
+          loading={loading}
         />
       )}
       <Modal
