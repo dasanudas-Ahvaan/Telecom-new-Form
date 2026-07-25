@@ -339,7 +339,7 @@ export default function MemberRegistration() {
   const handleSubscribeAndRegister = async () => {
     setLoading(true);
     try {
-      const {id:planId,amount} = selectedPlan
+      const { id: planId, amount } = selectedPlan;
       if (!selectedPlan.id) {
         alert("please select a valid monthly donation plan");
         return;
@@ -359,6 +359,7 @@ export default function MemberRegistration() {
         setLoading(false);
         return;
       }
+      console.log("payment response form subscription", paymentResponse);
       const {
         razorpay_order_id: razorpayOrderId,
         razorpay_payment_id: razorpayPaymentId,
