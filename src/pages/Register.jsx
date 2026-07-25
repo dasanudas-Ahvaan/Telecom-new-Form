@@ -272,8 +272,6 @@ export default function MemberRegistration() {
         alert("please select a valid amount");
         return;
       }
-      console.log("this is volunteer data", volunteerData);
-      return;
 
       const paymentResponse = await initiatePayment(paymentAmount, {
         name: formData.fullName,
