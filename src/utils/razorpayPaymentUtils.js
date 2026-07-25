@@ -29,7 +29,6 @@ export const initiatePayment = async (amount, prefillData) => {
     throw new Error("payment processing failed, retry later");
   }
   const { order } = res.data.data;
-  console.log("res from backend", res.data.data);
 
   return new Promise((resolve) => {
     const options = {

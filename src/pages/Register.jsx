@@ -288,6 +288,8 @@ export default function MemberRegistration() {
         setLoading(false);
         return;
       }
+      console.log("log of once", paymentResponse);
+
       const {
         razorpay_order_id: razorpayOrderId,
         razorpay_payment_id: razorpayPaymentId,
@@ -333,6 +335,7 @@ export default function MemberRegistration() {
       setLoading(false);
     }
   };
+  // console.log("ye chal rha hai kya");
 
   const handleSubscribeAndRegister = async () => {
     setLoading(true);
@@ -357,11 +360,12 @@ export default function MemberRegistration() {
         setLoading(false);
         return;
       }
-      console.log("payment response form subscription", paymentResponse);
+      console.log("log of recurring", paymentResponse);
+
       const {
         razorpay_order_id: razorpayOrderId,
         razorpay_payment_id: razorpayPaymentId,
-        razorpaySubscriptionId,
+        razorpay_subscription_id: razorpaySubscriptionId,
       } = paymentResponse;
       const donationType = volunteerData
         .find((p) => p.programId === "financial-assistance")
