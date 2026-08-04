@@ -8,6 +8,7 @@ import CustomFields from "./components/CustomField";
 import { ProtectedRoute, SuperUserRoute } from "./components/ProtectedRoutes";
 import NoAccess from "./pages/NoAccess";
 import AdminManagement from "./pages/AdminManagement";
+import YuSanskar from "./pages/YuSanskar";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           />
           <Route path="/admin" element={<Login />} />
           <Route path="/register" element={<MemberForm />} />
+          <Route path="/yusanskar" element={<YuSanskar />} />
           <Route path="/noAccess" element={<NoAccess />} />
           <Route
             path="/admin_management"
