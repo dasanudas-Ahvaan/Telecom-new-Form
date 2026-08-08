@@ -23,12 +23,6 @@ export const createCustomField = async (formdata, userId) => {
     const response = await api.post(
       `/custom-field/${userId}`,
       formdata,
-      // {
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     authorization: `Bearer ${token}`,
-      //   },
-      // }
     );
     if (response.status === 201) {
       return response.data;
@@ -49,11 +43,6 @@ export const deleteCustomField = async (id, userId) => {
   try {
     const response = await api.delete(
       `/custom-field/${userId}?&fieldId=${id}`,
-      // {
-      //   headers: {
-      //     authorization: `Bearer ${token}`,
-      //   },
-      // },
     );
     if (response.status === 200) {
       return response.data;

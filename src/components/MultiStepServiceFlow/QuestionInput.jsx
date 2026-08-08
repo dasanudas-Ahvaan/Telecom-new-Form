@@ -15,6 +15,7 @@ export function QuestionInput({ question, value, questionNumber, onChange }) {
           className={baseClasses}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          placeholder="max 300 words"
         />
       )}
       {question.type === "text" && (

@@ -154,7 +154,7 @@ export default function CustomFields() {
               <input
                 type="text"
                 value={form.label}
-                onChange={(e) => setForm({ ...form, label: e.target.value })}
+                onChange={(e) => setForm({ ...form, label: e.target.value.toLowerCase() })}
                 placeholder="e.g., Emergency Contact"
                 className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
               />
@@ -190,7 +190,7 @@ export default function CustomFields() {
                   type="text"
                   value={form.options}
                   onChange={(e) =>
-                    setForm({ ...form, options: e.target.value })
+                    setForm({ ...form, options: e.target.value.toLowerCase() })
                   }
                   placeholder="e.g., Option 1, Option 2, Option 3"
                   className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
@@ -268,7 +268,7 @@ export default function CustomFields() {
                       {f.type}
                     </div>
                     <div className="flex gap-1">
-                      <p className="text-white font-medium">{f.label}</p>
+                      <p className="text-white font-medium capitalize">{f.label}</p>
                       {f.required && (
                         <sup className="inline-flex items-center gap-1 text-xs text-orange-400">
                           * Required
