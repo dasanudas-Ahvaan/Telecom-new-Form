@@ -19,7 +19,7 @@ const ViewMember = ({ isOpen, onClose, member, handleEdit }) => {
     key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
 
   const renderValue = (key, value) => {
-    if (key === "dateOfBirth") return new Date(value).toDateString();
+    // if (key === "dateOfBirth") return new Date(value).toDateString();
     if (key === "isVerified")
       return (
         <span
@@ -44,6 +44,7 @@ const ViewMember = ({ isOpen, onClose, member, handleEdit }) => {
           {value === "active" ? "Active" : "Inactive"}
         </span>
       );
+    if (Array.isArray(value)) return value.join(", ");
     return value || "N/A";
   };
 
@@ -55,7 +56,7 @@ const ViewMember = ({ isOpen, onClose, member, handleEdit }) => {
   const extraFields = member.extraFields
     ? Object.entries(member.extraFields)
     : [];
-
+  console.log("sected member", member);
   return (
     <>
       {/* Outer Overlay - Handles Fade In/Out */}
@@ -183,7 +184,6 @@ const ViewMember = ({ isOpen, onClose, member, handleEdit }) => {
           </div>
         </div>
       </div>
-     
     </>
   );
 };

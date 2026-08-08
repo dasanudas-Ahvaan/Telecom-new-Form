@@ -91,8 +91,8 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
         console.error("API did not return a valid member object");
       }
     } catch (error) {
-      console.error("Error creating member:", error.message);
-      setErr(error.message || "Failed to add member. Please try again.");
+      console.error("Error updating member:", error.message);
+      setErr("Failed to update member. Please try again.");
       setIsLoading(false);
     } finally {
       setIsLoading(false);
@@ -202,8 +202,8 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
                 name="email"
                 value={formData["email"]}
                 onChange={handleChange}
-                className={`inputCls ${
-                  formData?.email !== "" ? "cursor-not-allowed" : ""
+                className={`w-full bg-gray-800 border border-red-700 rounded-lg px-3 py-2.5 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
+                  formData?.email ? "opacity-60 cursor-not-allowed" : ""
                 }`}
                 placeholder="Enter email"
               />
@@ -435,12 +435,17 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
                 Previous Associations
               </label>
               <input
+                disabled
                 autoComplete="off"
                 type="text"
                 name="previousAssociations"
                 value={formData["previousAssociations"]}
-                onChange={handleChange}
-                className="inputCls"
+                onChange={() => {}}
+                className={`w-full bg-gray-800 border border-red-700 rounded-lg px-3 py-2.5 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
+                  formData?.previousAssociations
+                    ? "opacity-60 cursor-not-allowed"
+                    : ""
+                }`}
                 placeholder="Enter Previous Associations"
               />
             </div>
@@ -449,12 +454,17 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
                 Volunteer Programs
               </label>
               <input
+                disabled
                 autoComplete="off"
                 type="text"
                 name="volunteerPrograms"
                 value={formData["volunteerPrograms"]}
-                onChange={handleChange}
-                className="inputCls"
+                onChange={() => {}}
+                className={`w-full bg-gray-800 border border-red-700 rounded-lg px-3 py-2.5 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
+                  formData?.volunteerPrograms
+                    ? "opacity-60 cursor-not-allowed"
+                    : ""
+                }`}
                 placeholder="Enter Volunteer Programs"
               />
             </div>
