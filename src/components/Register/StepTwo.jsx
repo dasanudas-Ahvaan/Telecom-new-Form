@@ -29,7 +29,7 @@ export default function StepTwo({
     };
     handleChange(event);
   };
- 
+
   return (
     <form
       onSubmit={onContinue}
@@ -117,13 +117,14 @@ export default function StepTwo({
           </div>
           <Input
             label="Date of Birth"
-            type="date"
+            pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$"
             name="dateOfBirth"
             value={formData.dateOfBirth}
             onChange={handleChange}
             required
             error={errors.dateOfBirth}
             className="bg-gray-900/50 border-gray-700 focus:ring-orange-500"
+            placeholder={"dd-mm-yyyy"}
           />
           <Input
             label="Aadhar Number"
