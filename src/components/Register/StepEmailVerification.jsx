@@ -10,6 +10,7 @@ function StepEmailVerification({
   message,
   cooldown,
 }) {
+  
   return (
     <section className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6 space-y-6 shadow-xl">
       {/* Header */}
@@ -119,11 +120,11 @@ function StepEmailVerification({
         )}
       </button>
       {/* Message */}
-      {/* {message && (
-        <div className="p-4 rounded-xl border bg-blue-900/30 border-blue-800 text-blue-400 text-sm font-medium text-center animate-fadeIn">
+      {message && (
+        <div className="p-4 rounded-xl border bg-red-900/30 border-red-800 text-red-400 text-sm font-medium text-center animate-fadeIn">
           <p>{message}</p>
         </div>
-      )} */}
+      )}
     </section>
   );
 }
