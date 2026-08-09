@@ -298,15 +298,12 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
                 required
                 autoComplete="off"
                 name="dateOfBirth"
-                value={
-                  formData.dateOfBirth
-                    ? new Date(formData.dateOfBirth).toISOString().split("T")[0]
-                    : ""
-                }
+                value={formData.dateOfBirth}
                 onChange={handleChange}
                 className="inputCls"
                 placeholder="Enter dateOfBirth"
-                type="date"
+                type="text"
+                pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$"
               />
             </div>
             <div className="flex items-start justify-between gap-12 resp whitespace-nowrap">
@@ -430,7 +427,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
                 placeholder="Enter Country"
               />
             </div>
-            <div className="flex items-center justify-start gap-12 resp whitespace-nowrap">
+            {/*<div className="flex items-center justify-start gap-12 resp whitespace-nowrap">
               <label className="w-[16vw] md:w-sm font-normal text-lg py-[0.4rem]">
                 Previous Associations
               </label>
@@ -449,7 +446,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
                 placeholder="Enter Previous Associations"
               />
             </div>
-            <div className="flex items-center justify-start gap-12 resp whitespace-nowrap">
+             <div className="flex items-center justify-start gap-12 resp whitespace-nowrap">
               <label className="w-[16vw] md:w-sm font-normal text-lg py-[0.4rem]">
                 Volunteer Programs
               </label>
@@ -467,7 +464,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
                 }`}
                 placeholder="Enter Volunteer Programs"
               />
-            </div>
+            </div> */}
             <div className="flex items-center justify-start gap-12 resp whitespace-nowrap">
               <label className="w-[16vw] md:w-sm font-normal text-lg py-[0.4rem]">
                 Aadhar Number
