@@ -34,6 +34,7 @@ const Login = () => {
 
       const { data } = response;
       loginFromAuthContext(data);
+      navigate("/dashboard", { replace: true });
       // Navigation is handled by useEffect watching token
     } catch (error) {
       setErr(error.message || "Login failed. Please try again.");
@@ -43,11 +44,11 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
-    }
-  }, [user, navigate]);
+  // useEffect(() => {
+  //   if (user) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [user, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
