@@ -80,7 +80,22 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      const response = await editMember(user._id, formData);
+      const keepAsItIs = [
+        "previousAssociations",
+        "volunteerPrograms",
+        "email",
+        "fullName",
+        // "aadhar",
+      ];
+      const filtered = Object.keys(formData)
+        .filter((o) => !keepAsItIs.includes(o))
+        .reduce((obj, key) => {
+          obj[key] = formData[key];
+          return obj;
+        }, {});
+      // console.log("formdata", filtered);
+      // return;
+      const response = await editMember(filtered);
       if (response.success) {
         onUpdate(response.data);
         setFormData(initialFormData);
@@ -102,7 +117,7 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      const response = await deleteMember(user._id, formData._id);
+      const response = await deleteMember(formData._id);
       if (response.success) {
         onDelete(formData._id);
         setFormData(initialFormData);
@@ -522,14 +537,15 @@ const EditMember = ({ isOpen, onClose, member, onUpdate, onDelete }) => {
             >
               Close
             </button>
-            <button
+            {/* temporary disabled */}
+            {/* <button
               className="deleteMemberButton"
               title="Delete Member"
               onClick={() => handleDelete()}
               type="button"
             >
               Delete Member
-            </button>
+            </button> */}
           </div>
         </form>
       </div>

@@ -56,7 +56,6 @@ const ViewMember = ({ isOpen, onClose, member, handleEdit }) => {
   const extraFields = member.extraFields
     ? Object.entries(member.extraFields)
     : [];
-  console.log("sected member", member);
   return (
     <>
       {/* Outer Overlay - Handles Fade In/Out */}
