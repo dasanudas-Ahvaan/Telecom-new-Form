@@ -1,9 +1,9 @@
 import api from "./axiosConfig";
 
-export const editMember = async (userid, formdata) => {
+export const editMember = async (formdata) => {
   try {
     const response = await api.put(
-      `/auth/${userid}?&id=${formdata._id}`,
+      `/auth/?&id=${formdata._id}`,
       formdata,
       // {
       //   headers: {
@@ -27,9 +27,9 @@ export const editMember = async (userid, formdata) => {
   }
 };
 
-export const deleteMember = async (userid, memberid) => {
+export const deleteMember = async (memberid) => {
   try {
-    const response = await api.delete(`/auth/${userid}?&id=${memberid}`, 
+    const response = await api.delete(`/auth/?id=${memberid}`, 
     //   {
     //   headers: {
     //     "Content-Type": "application/json",

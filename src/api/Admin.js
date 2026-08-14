@@ -1,11 +1,8 @@
 import api from "./axiosConfig";
 
-export const getAllMembers = async (userid, status = "unverified") => {
-  if (!userid) {
-    throw new Error("User ID is required to fetch members");
-  }
+export const getAllMembers = async (status = "unverified") => {
   try {
-    const response = await api.get(`/auth/${userid}`, {
+    const response = await api.get(`/auth/`, {
       // headers: { authorization: `Bearer ${token}` },
       params: { status },
     });

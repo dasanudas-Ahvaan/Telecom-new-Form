@@ -1,10 +1,10 @@
 import api from "./axiosConfig";
 
 // Create Admin
-export const createAdmin = async (userId, email, password, name) => {
+export const createAdmin = async (email, password, name) => {
   try {
     const response = await api.post(
-      `/admin/create/${userId}`,
+      `/admin/create/`,
       { email, password, name },
       // {
       //   headers: {
@@ -25,10 +25,10 @@ export const createAdmin = async (userId, email, password, name) => {
 };
 
 // Remove Admin
-export const removeAdmin = async (userId, adminId) => {
+export const removeAdmin = async (adminId) => {
   try {
     const response = await api.delete(
-      `/admin/remove/${userId}/${adminId}`,
+      `/admin/remove/${adminId}`,
       //    {
       //   headers: {
       //     authorization: `Bearer ${token}`,
@@ -47,10 +47,10 @@ export const removeAdmin = async (userId, adminId) => {
 };
 
 // Reset Admin Password
-export const resetAdminPassword = async (userId, adminId, newPassword) => {
+export const resetAdminPassword = async (adminId, newPassword) => {
   try {
     const response = await api.put(
-      `/admin/reset-password/${userId}`,
+      `/admin/reset-password/`,
       { adminId, newPassword },
       // {
       //   headers: {
@@ -71,10 +71,10 @@ export const resetAdminPassword = async (userId, adminId, newPassword) => {
 };
 
 // Get All Admins
-export const getAllAdmins = async (userId) => {
+export const getAllAdmins = async () => {
   try {
     const response = await api.get(
-      `/admin/list/${userId}`,
+      `/admin/list/`,
       //    {
       //   headers: {
       //     authorization: `Bearer ${token}`,

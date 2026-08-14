@@ -39,7 +39,7 @@ const Dashboard = () => {
     const fetchMembers = async () => {
       try {
         setIsLoading(true);
-        const response = await getAllMembers(user._id, filterType);
+        const response = await getAllMembers(filterType);
         if (response.success) {
           setMembers(response.data);
           setCounts((prev) => ({
