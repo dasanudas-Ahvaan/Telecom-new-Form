@@ -8,34 +8,37 @@ import CustomFields from "./components/CustomField";
 import { ProtectedRoute, SuperUserRoute } from "./components/ProtectedRoutes";
 import NoAccess from "./pages/NoAccess";
 import AdminManagement from "./pages/AdminManagement";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 function App() {
   return (
-    <div className="">
-      <Layout>
-        <Routes>
-          <Route
-            path="/"
-            element={<ProtectedRoute children={<Dashboard />} />}
-          />
-          <Route path="/admin" element={<Login />} />
-          <Route path="/register" element={<MemberForm />} />
-          <Route path="/noAccess" element={<NoAccess />} />
-          <Route
-            path="/admin_management"
-            element={<SuperUserRoute children={<AdminManagement />} />}
-          />
-          <Route
-            path="/dashboard"
-            element={<ProtectedRoute children={<Dashboard />} />}
-          />
-          <Route
-            path="/dashboard/field"
-            element={<ProtectedRoute children={<CustomFields />} />}
-          />
-        </Routes>
-      </Layout>
-    </div>
+    <ErrorBoundary>
+      <div className="">
+        <Layout>
+          <Routes>
+            <Route
+              path="/"
+              element={<ProtectedRoute children={<Dashboard />} />}
+            />
+            <Route path="/admin" element={<Login />} />
+            <Route path="/register" element={<MemberForm />} />
+            <Route path="/noAccess" element={<NoAccess />} />
+            <Route
+              path="/admin_management"
+              element={<SuperUserRoute children={<AdminManagement />} />}
+            />
+            <Route
+              path="/dashboard"
+              element={<ProtectedRoute children={<Dashboard />} />}
+            />
+            <Route
+              path="/dashboard/field"
+              element={<ProtectedRoute children={<CustomFields />} />}
+            />
+          </Routes>
+        </Layout>
+      </div>
+    </ErrorBoundary>
   );
 }
 
