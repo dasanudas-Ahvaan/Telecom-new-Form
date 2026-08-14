@@ -1,3 +1,4 @@
+import { ChoiceTermsViewer } from "../terms/TermsViewer";
 import { QuestionInput } from "./QuestionInput";
 import { Fragment } from "react";
 
@@ -8,6 +9,7 @@ export function StepTwoDetails({
   onAnswerChange,
   onAgreementChange,
 }) {
+
   return (
     <>
       <div className="space-y-8 [counter-reset:roman-list]" role="list">
@@ -50,13 +52,12 @@ export function StepTwoDetails({
                   {/* Terms & PDF Section */}
                   <section className="space-y-4 rounded-lg">
                     <h4 className="font-semibold ">Terms & Conditions</h4>
-                    <div className="h-48 md:h-64 w-full rounded border border-gray-300 overflow-hidden bg-white">
-                      <iframe
-                        src={`${choice.pdfUrl}#toolbar=0`}
-                        title={`Terms and Conditions for ${choice.title}`}
-                        className="w-full h-full"
-                      />
-                    </div>
+
+                    <ChoiceTermsViewer
+                      choice={choice}
+                      agreement={agreements[choice._id]}
+                      onAgreementChange={onAgreementChange}
+                    />
 
                     <label className="flex items-start justify-start gap-3 cursor-pointer">
                       <input
