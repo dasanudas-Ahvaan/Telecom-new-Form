@@ -1,5 +1,6 @@
 import api from "../api/axiosConfig";
 const RP_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID;
+const ENV = import.meta.env.NODE_ENV;
 export const loadRazorpayScript = () => {
   return new Promise((resolve) => {
     if (window.Razorpay) return resolve(true);
@@ -15,6 +16,8 @@ export const initiatePayment = async (amount, prefillData) => {
   const isLoaded = await loadRazorpayScript();
   if (!isLoaded) throw new Error("Razorpay SDK failed to load");
   if (!RP_KEY) throw new Error("Razorpay key not present");
+  if ((ENV === "production") && RP_KEY.startsWith("rzp_test"))
+    throw new Error("Incorrect Razorpay key being used");
   const { name, email, contact } = prefillData;
   const formData = {
     ...prefillData,
