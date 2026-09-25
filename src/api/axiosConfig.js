@@ -41,7 +41,10 @@ api.interceptors.response.use(
     const currentPath = window.location.pathname;
 
     // Prevent looping if we are already on the login page (/admin)
-    if (currentPath === "/admin") {
+    // if (currentPath === "/admin") {
+    //   return Promise.reject(error);
+    // }
+    if (currentPath === "/register" || currentPath === "/register/") {
       return Promise.reject(error);
     }
 
@@ -62,8 +65,12 @@ api.interceptors.response.use(
         // console.log("Kill switch activated!", refreshError);
 
         // If refresh fails permanently, redirect to login page
-        if (currentPath !== "/admin") {
-          window.location.href = "/admin";
+        // if (currentPath !== "/admin") {
+        //   window.location.href = "/admin";
+        // }
+        // return Promise.reject(refreshError);
+        if (currentPath !== "/register" && currentPath !== "/register/") {
+          window.location.href = "/register/"; // Keeps the user inside React
         }
         return Promise.reject(refreshError);
       }

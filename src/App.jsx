@@ -16,8 +16,9 @@ function App() {
       <div className="">
         <Layout>
           <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/register" element={<MemberForm />} />
+            <Route path="/" element={<MemberForm />} />
+
+            <Route path="/login" element={<Login />} />
 
             <Route path="/noAccess" element={<NoAccess />} />
             <Route
