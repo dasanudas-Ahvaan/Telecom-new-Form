@@ -20,7 +20,6 @@ function App() {
 
             <Route path="/login" element={<Login />} />
 
-            <Route path="/noAccess" element={<NoAccess />} />
             <Route
               path="/admin_management"
               element={<SuperUserRoute children={<AdminManagement />} />}
@@ -33,6 +32,7 @@ function App() {
               path="/dashboard/field"
               element={<ProtectedRoute children={<CustomFields />} />}
             />
+            <Route path="/noAccess" element={<NoAccess />} />
           </Routes>
         </Layout>
       </div>
