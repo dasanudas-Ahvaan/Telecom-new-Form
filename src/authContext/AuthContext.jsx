@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
       // 2. Clear local React state
       setUser(null);
       // 3. Optional: Redirect to login
-      window.location.href = "/admin";
+      window.location.href = "/register/";;
     }
   };
 
