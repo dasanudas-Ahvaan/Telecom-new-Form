@@ -3,7 +3,7 @@ import axios from "axios";
 const API_URL = import.meta.env.VITE_BACKEND_API;
 
 if (
-  import.meta.env.NODE_ENV === "production" &&
+  import.meta.env.PROD &&
   !API_URL.startsWith("https://")
 ) {
   throw new Error(
