@@ -3,6 +3,6 @@ export const routes = [
   // { name: "Dashboard", link: "/dashboard" },
   { name: "Admin Management", link: "/admin_management", role: "super_user" },
   { name: "Register", link: "/register" },
-  { name: "Login", link: "/admin" },
+  { name: "Login", link: "/" },
   { name: "Logout", link: "/logout" },
 ];

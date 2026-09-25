@@ -7,7 +7,7 @@ export const ProtectedRoute = ({ children, redirectTo }) => {
   const isPermitted = user?.role === "admin";
   const isSuperUser = user?.role === "super_user";
   if (!isAuthenticated) {
-    return <Navigate to={"/admin"} replace />;
+    return <Navigate to={"/"} replace />;
   } else if (!isPermitted && !isSuperUser) {
     return <Navigate to={"/noAccess"} />;
   }
@@ -20,7 +20,7 @@ export const SuperUserRoute = ({ children, redirectTo }) => {
   const isAuthenticated = Boolean(user);
   const isSuperUser = user?.role === "super_user";
   if (!isAuthenticated) {
-    return <Navigate to={"/admin"} replace />;
+    return <Navigate to={"/"} replace />;
   } else if (!isSuperUser) {
     return <Navigate to={"/noAccess"} />;
   }

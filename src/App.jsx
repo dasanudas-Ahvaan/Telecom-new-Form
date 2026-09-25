@@ -16,12 +16,9 @@ function App() {
       <div className="">
         <Layout>
           <Routes>
-            <Route
-              path="/"
-              element={<ProtectedRoute children={<Dashboard />} />}
-            />
-            <Route path="/admin" element={<Login />} />
+            <Route path="/" element={<Login />} />
             <Route path="/register" element={<MemberForm />} />
+
             <Route path="/noAccess" element={<NoAccess />} />
             <Route
               path="/admin_management"
