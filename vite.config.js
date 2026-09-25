@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss()],
+    base: "/register/",
     esbuild: {
       drop: env.NODE_ENV === "development" ? [] : ["console", "debugger"],
     },
