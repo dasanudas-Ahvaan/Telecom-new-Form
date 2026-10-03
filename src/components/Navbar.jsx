@@ -59,7 +59,7 @@ export default function Navbar() {
           >
             <img
               className="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-110"
-              src="/alw.svg"
+              src="/register/alw.svg"
               alt="Logo"
             />
             <span className="text-xl font-bold bg-linear-to-r from-orange-400 to-red-500 bg-clip-text text-transparent hidden sm:block">
